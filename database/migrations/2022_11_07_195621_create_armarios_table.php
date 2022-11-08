@@ -16,6 +16,7 @@ class CreateArmariosTable extends Migration
         Schema::create('armarios', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('número');
         });
     }
 

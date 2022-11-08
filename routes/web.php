@@ -1,9 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\armariocontroller;
+use App\Http\Controllers\ArmarioController;
 
 
 
-Route::get('/armarios',[armariocontroller::class,'index']);
-Route::get('/armarios/{id}',[armariocontroller::class,'show']);
+Route::resource('armarios',ArmarioController::class);

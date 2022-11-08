@@ -2,6 +2,6 @@
 
 @section('content')
 
-{{"$armario"}}
+@include('armarios.partials.fields')
 
 @endsection
