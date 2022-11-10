@@ -9,4 +9,14 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
     protected $redirectTo = '/';
+    public function username()
+    {
+        return 'codpes';
+    }
+    public function logout()
+    {
+        auth()->logout();
+        return redirect('/');
+    }
 }
+
