@@ -28,7 +28,9 @@ class ArmarioController extends Controller
      */
     public function create()
     {
-        //
+        return view('armarios.create',[
+            'armario' => new Armario,
+        ]);
     }
 
     /**
@@ -39,7 +41,10 @@ class ArmarioController extends Controller
      */
     public function store(StoreArmarioRequest $request)
     {
-        //
+        $armario = new Armario;
+        $armario->numero = $request->numero;
+        $armario->save();
+        return redirect("/armarios/{$armario->id}");
     }
 
     /**
@@ -65,7 +70,9 @@ class ArmarioController extends Controller
      */
     public function edit(Armario $armario)
     {
-        //
+        return view('armarios.edit',[
+            'armario' => $armario
+        ]);
     }
 
     /**
@@ -77,8 +84,11 @@ class ArmarioController extends Controller
      */
     public function update(UpdateArmarioRequest $request, Armario $armario)
     {
-        //
-    }
+        $armario->numero = $request->numero;
+        
+        $armario->save();
+        return redirect("/armarios/{$armario->id}");
+        }
 
     /**
      * Remove the specified resource from storage.
@@ -88,6 +98,7 @@ class ArmarioController extends Controller
      */
     public function destroy(Armario $armario)
     {
-        //
+        $armario->delete();
+        return redirect('/armarios');
     }
 }
