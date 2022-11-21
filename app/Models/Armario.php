@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Armario extends Model
 {
     use HasFactory;
+    public static function estados(){
+        return [
+            'Emprestado',
+            'Disponível'
+        ];
+    }
 }

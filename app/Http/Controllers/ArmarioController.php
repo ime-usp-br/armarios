@@ -43,6 +43,7 @@ class ArmarioController extends Controller
     {
         $armario = new Armario;
         $armario->numero = $request->numero;
+        $armario->estado = $request->estado;
         $armario->save();
         return redirect("/armarios/{$armario->id}");
     }
@@ -85,6 +86,7 @@ class ArmarioController extends Controller
     public function update(UpdateArmarioRequest $request, Armario $armario)
     {
         $armario->numero = $request->numero;
+        $armario->estado = $request->estado;
         
         $armario->save();
         return redirect("/armarios/{$armario->id}");

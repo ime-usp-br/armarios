@@ -43,10 +43,12 @@ $menu = [
     [
         # este item de menu será substituido no momento da renderização
         'key' => 'menu_dinamico',
+        
     ],
     [
-        'text' => 'Drop Down',
-        'submenu' => $submenu2,
+        'text' => 'Cadastrar armário',
+        'url' => 'armarios/create',
+        
         'can' => '',
     ],
     [

@@ -1,5 +1,6 @@
 <ul>
   <li><a href="/armarios/{{$armario->id}}">{{ $armario->numero }}</a></li>
+  <li>{{ $armario->estado }}</li>
   <li><a href="/armarios/{{$armario->id}}/edit">Editar</a></li>
   
   <li>
