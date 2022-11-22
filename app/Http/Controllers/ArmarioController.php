@@ -33,6 +33,36 @@ class ArmarioController extends Controller
         ]);
     }
 
+
+
+    /**
+     * Cria armários em lote
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function criacaoEmLote()
+    {
+        
+        $numero_inicial = $request->numero_inicial;
+        $numero_final = $request->numero_final;
+
+
+        for ($numero_inicial; $numero_inicial < $numero_final; $numero_inicial++) {
+            echo $i;
+        }
+        
+        
+
+
+
+    }
+
+
+
+
+
+
+
     /**
      * Store a newly created resource in storage.
      *
