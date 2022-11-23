@@ -52,8 +52,13 @@ $menu = [
         'can' => '',
     ],
     [
-        'text' => 'Está logado',
-        'url' => config('app.url') . '/logado', // com caminho absoluto
+        'text' => 'Solicitar empréstimo',
+        'url' => config('app.url') . '/emprestimo', // com caminho absoluto
+        'can' => 'user',
+    ],
+    [
+        'text' => 'Cadastrar armários em lote',
+        'url' => 'armarios/criacaoEmLote', // com caminho absoluto
         'can' => 'user',
     ],
     [

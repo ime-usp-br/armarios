@@ -9,3 +9,5 @@ use App\Http\Controllers\LoginController;
 Route::resource('armarios',ArmarioController::class);
 
 Route::get('/', [ArmarioController::class, 'index']);
+
+Route::post('/armarios/criacaoEmLote', [ArmarioController::class, 'criacaoEmLote']);

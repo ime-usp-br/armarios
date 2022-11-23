@@ -2,11 +2,26 @@
 
 @section('content')
 
-@forelse($armarios as $armario)
+<table class="table table-bordered table-striped table-hover" style="font-size:15px;">
+    <tr>
+        <th style="vertical-align: middle;">Número</th>
+        <th style="vertical-align: middle;">Estado</th>
+        
+       
+        
+    </tr>
+    @foreach($armarios as $armario)
+    <tr> 
+        <td> <a href="/armarios/{{$armario->id}}">{{ $armario->numero }}</a></td>
+        <td>{{ $armario->estado }}</td>
+        
+    </tr>
 
-@include('armarios.partials.fields')
-<br>
-@empty
-    Não há armários cadastrados nesse sistema ainda
-@endforelse
+    @endforeach
+
+</table>
+
+                     
+
+    
 @endsection

@@ -48,10 +48,12 @@ class ArmarioController extends Controller
 
 
         for ($numero_inicial; $numero_inicial < $numero_final; $numero_inicial++) {
-            echo $i;
+            echo $numero_inicial;
         }
         
-        
+        return view('armarios.criacaoEmLote',[
+            'armario' => new Armario,
+        ]);
 
 
 
