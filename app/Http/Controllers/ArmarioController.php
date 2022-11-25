@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreArmarioRequest;
+use App\Http\Requests\CriacaoEmLoteArmarioRequest;
+
+
 use App\Http\Requests\UpdateArmarioRequest;
 use App\Models\Armario;
 
@@ -42,23 +45,32 @@ class ArmarioController extends Controller
      */
     public function criacaoEmLote()
     {
-        
-        $numero_inicial = $request->numero_inicial;
-        $numero_final = $request->numero_final;
+         
+#        $numero_inicial = $request->numero_inicial;
+#        $numero_final = $request->numero_final;
+    
 
-
-        for ($numero_inicial; $numero_inicial < $numero_final; $numero_inicial++) {
-            echo $numero_inicial;
-        }
         
         return view('armarios.criacaoEmLote',[
             'armario' => new Armario,
         ]);
+    }    
 
-
-
+    public function storeEmLote(CriacaoEmLoteArmarioRequest $request)
+    {
+        $armario = new Armario;
+        $armario->numero_inicial = $request->numero_inicial;
+        $armario->numero_final = $request->numero_final;
+        for ($armario->numero_inicial; $armario->numero_inicial < $armario->numero_final; $armario->numero_inicial++){
+             $armario->estado = $request->estado;
+            $armario->save();
+        }
+           
+        
+    
+        return redirect("/armarios");
     }
-
+    
 
 
 
