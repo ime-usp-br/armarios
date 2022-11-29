@@ -18,7 +18,7 @@ class ArmarioController extends Controller
      */
     public function index()
     {
-        $armarios = Armario::all();
+        $armarios = Armario::all()->sortBy("numero");
         return view('armarios.index',[
             'armarios' => $armarios
         ]);
@@ -43,7 +43,7 @@ class ArmarioController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function criacaoEmLote()
+    public function createEmLote()
     {
          
 #        $numero_inicial = $request->numero_inicial;
@@ -51,23 +51,19 @@ class ArmarioController extends Controller
     
 
         
-        return view('armarios.criacaoEmLote',[
+        return view('armarios.createEmLote',[
             'armario' => new Armario,
         ]);
     }    
 
     public function storeEmLote(CriacaoEmLoteArmarioRequest $request)
     {
-        $armario = new Armario;
-        $armario->numero_inicial = $request->numero_inicial;
-        $armario->numero_final = $request->numero_final;
-        for ($armario->numero_inicial; $armario->numero_inicial < $armario->numero_final; $armario->numero_inicial++){
-             $armario->estado = $request->estado;
-            $armario->save();
+        $validated = $request->validated();
+
+        for ($i = $validated["numero_inicial"]; $i <= $validated["numero_final"]; $i++){
+            Armario::updateOrCreate(["numero"=>$i],["estado"=>$validated["estado"]]);
         }
-           
-        
-    
+
         return redirect("/armarios");
     }
     

@@ -1,5 +1,6 @@
 @extends('main')
-@section('content')<form>
+@section('content')
+<form action='{{route("armarios.storeEmLote")}}' method='post'>
 Número inicial: <input type="integer" name="numero_inicial" value="{{ $armario->numero_inicial }}">
 Número final: <input type="integer" name="numero_final" value="{{ $armario->numero_final }}">
 
@@ -13,10 +14,12 @@ Número final: <input type="integer" name="numero_final" value="{{ $armario->num
     @endforeach
 
 </select>
+
 @csrf
-@method('storeEmLote')
+@method('POST')
 <button type="submit">Enviar</button> 
 
+</form>
 
 
 @endsection

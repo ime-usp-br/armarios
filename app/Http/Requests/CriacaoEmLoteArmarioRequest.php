@@ -24,7 +24,11 @@ class CriacaoEmLoteArmarioRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'numero_inicial'=>'required',
+            'numero_final'=>'required',
+            'estado'=>'required',
+
+
         ];
     }
 }
