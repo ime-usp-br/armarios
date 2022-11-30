@@ -52,15 +52,16 @@ $menu = [
         'can' => '',
     ],
     [
-        'text' => 'Solicitar empréstimo',
-        'url' => config('app.url') . '/emprestimo', // com caminho absoluto
-        'can' => 'user',
-    ],
-    [
         'text' => 'Cadastrar armários em lote',
         'url' => "/armarios/create/emLote", // com caminho absoluto
         'can' => 'user',
     ],
+    [
+        'text' => 'Solicitar empréstimo',
+        'url' => config('app.url') . '/emprestimo', // com caminho absoluto
+        'can' => 'user',
+    ],
+    
     [
         'text' => 'Menu gerente',
         'url' => 'gerente',

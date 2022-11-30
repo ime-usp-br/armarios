@@ -46,8 +46,7 @@ class ArmarioController extends Controller
     public function createEmLote()
     {
          
-#        $numero_inicial = $request->numero_inicial;
-#        $numero_final = $request->numero_final;
+
     
 
         

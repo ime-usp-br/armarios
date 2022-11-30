@@ -14,7 +14,10 @@ class EmprestimoController extends Controller
      */
     public function index()
     {
-        //
+        $armarios = Armario::all()->sortBy("numero");
+        return view('armarios.index',[
+            'armarios' => $armarios
+        ]);
     }
 
     /**
