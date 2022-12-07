@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Emprestimo;
 use Illuminate\Http\Request;
+use App\Http\Controllers\ArmarioController;
+use App\Models\Armario;
+
 
 class EmprestimoController extends Controller
 {
@@ -14,8 +17,8 @@ class EmprestimoController extends Controller
      */
     public function index()
     {
-        $armarios = Armario::all()->sortBy("numero");
-        return view('armarios.index',[
+        $armarios = Armario::where("estado", "Disponível")->get()->sortBy('numero');
+        return view('emprestimos.index',[
             'armarios' => $armarios
         ]);
     }
@@ -85,4 +88,37 @@ class EmprestimoController extends Controller
     {
         //
     }
+
+    public function emprestimo(Armario $armario)
+    {
+        date_default_timezone_set('America/Sao_Paulo');
+        $validated['user_id'] = auth()->user()->id;
+        $validated['armario_id'] = $armario->id;
+
+        $armario->estado = 'Emprestado';
+        $armario->save();
+
+        $emprestimo = new Emprestimo;
+        $emprestimo->user_id = auth()->user()->id;
+        $emprestimo->armario_id = $armario->id;
+        $emprestimo->save();
+      
+        
+        
+        return redirect("/armarios");
+        
+//tem que fazer consulta em armarios para poder mostrar qual emprestimo é
+    
+    //2 - qual armário que foi escolhido
+    
+    //3 - qual o dia e a hora de agora - data corrente no php
+
+    //4 - criar uma nova instância de empréstimo com os dados 1, 2 e 3 
+
+    //5 - persistir o objeto criado
+
+
+    }
 }
+
+

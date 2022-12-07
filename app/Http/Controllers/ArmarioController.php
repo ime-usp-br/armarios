@@ -8,6 +8,8 @@ use App\Http\Requests\CriacaoEmLoteArmarioRequest;
 
 use App\Http\Requests\UpdateArmarioRequest;
 use App\Models\Armario;
+use App\Http\Controllers\EmprestimoController;
+use App\Models\Emprestimo;
 
 class ArmarioController extends Controller
 {
@@ -45,10 +47,6 @@ class ArmarioController extends Controller
      */
     public function createEmLote()
     {
-         
-
-    
-
         
         return view('armarios.createEmLote',[
             'armario' => new Armario,
@@ -95,8 +93,15 @@ class ArmarioController extends Controller
      */
     public function show(Armario $armario)
     {
+        $emprestimo = Emprestimo::where('datafim',null)->where('armario_id',$armario->id)->first();
+        
+        $user = $emprestimo ? $emprestimo->user : null;
+       
         return view('armarios.show',[
             'armario' => $armario,
+            'emprestimo' => $emprestimo,
+            'user' => $user,
+
 
         ]);
 

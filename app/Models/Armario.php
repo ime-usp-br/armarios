@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Emprestimo;
+
 
 class Armario extends Model
 {
@@ -12,6 +14,7 @@ class Armario extends Model
     protected $fillable = [
         "numero",
         "estado",
+
     ];
 
     public static function estados(){
@@ -19,5 +22,9 @@ class Armario extends Model
             'Emprestado',
             'Disponível'
         ];
+    }
+
+    public function emprestimos(){
+        return $this->hasToMany(Emprestimo::class); 
     }
 }
