@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Emprestimo;
+use Uspdev\Replicado\DB;
 
 class User extends Authenticatable
 {
@@ -48,4 +49,23 @@ class User extends Authenticatable
     public function emprestimos(){
         return $this->hasToMany(Emprestimo::class); 
     }
+
+    public static function test($codpes)
+    {
+
+        $query = " SELECT *";
+        $query .= " FROM VINCULOPESSOAUSP AS VP";
+        $query .= " WHERE VP.codpes = :codpes";
+        $query .= " AND VP.tipfnc = :tipfnc";
+        $query .= " AND VP.codund = :codund";
+        $param = [
+            'codpes' => $codpes,
+            'tipfnc' => "Docente",
+            'codund' => "45",
+        ];
+
+        return array_unique(DB::fetchAll($query, $param),SORT_REGULAR);
+
+    }
+
 }

@@ -6,6 +6,10 @@ $admin = [
         'url' => 'subitem1',
     ],
     [
+        'text' => 'Usuários',
+        'url' => 'users',
+    ],
+    [
         'text' => 'SubItem 2',
         'url' =>  '/subitem2',
         'can' => 'admin',
