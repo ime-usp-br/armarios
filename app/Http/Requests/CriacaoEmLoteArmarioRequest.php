@@ -26,9 +26,6 @@ class CriacaoEmLoteArmarioRequest extends FormRequest
         return [
             'numero_inicial'=>'required',
             'numero_final'=>'required',
-            'estado'=>'required',
-
-
         ];
     }
 }

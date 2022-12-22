@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Armario;
+use Carbon\Carbon;
 
 
 
@@ -15,9 +16,26 @@ class Emprestimo extends Model
 
     protected $fillable = [
         'datafim',
+        
         'armario_id',
         'user_id',
     ];
+
+    protected $casts = [
+        'dataprev' => 'date:d/m/Y',
+        
+    ];
+
+    public function setDataprevAttribute($value)
+    {
+        $this->attributes['dataprev'] = Carbon::createFromFormat('d/m/Y', $value);
+    }
+
+    public function getDataprevAttribute($value)
+    {
+        return $value ? Carbon::parse($value)->format('d/m/Y') : '';
+    }
+
     public function armario(){
         return $this->belongsTo(Armario::class,'armario_id');
     }

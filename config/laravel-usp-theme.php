@@ -53,12 +53,12 @@ $menu = [
         'text' => 'Cadastrar armário',
         'url' => 'armarios/create',
         
-        'can' => '',
+        'can' => 'admin',
     ],
     [
         'text' => 'Cadastrar armários em lote',
         'url' => "/armarios/create/emLote", // com caminho absoluto
-        'can' => 'user',
+        'can' => 'admin',
     ],
     [
         'text' => 'Solicitar empréstimo',

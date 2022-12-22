@@ -25,6 +25,10 @@ class Armario extends Model
     }
 
     public function emprestimos(){
-        return $this->hasToMany(Emprestimo::class); 
+        return $this->hasMany(Emprestimo::class); 
+    }
+
+    public function emprestimoAtivo(){
+        return $this->emprestimos()->where('datafim',null)->first(); 
     }
 }

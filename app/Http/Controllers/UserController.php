@@ -12,7 +12,7 @@ class UserController extends Controller
     {
         
 
-        $perfisEspeciais = ['Administrador', 'Secretaria', 'Membro Comissão', 'Presidente de Comissão', 'Vice Presidente de Comissão'];
+        $perfisEspeciais = ['Administrador', 'Secretaria'];
         $usuarios = User::whereHas('roles', function($q) use ($perfisEspeciais){ 
                         return $q->whereIn('name', $perfisEspeciais);})->orderBy('users.name')->get()
                     ->merge(
@@ -20,6 +20,23 @@ class UserController extends Controller
                         return $q->whereIn('name', $perfisEspeciais);})->orderBy('users.name')->get());
 
         $roles = Role::all();
+        $usuarios = $usuarios->sort(function($a,$b){
+            if($a->hasRole('Admin') and !$b->hasRole('Admin')){
+                return 1;
+
+            }elseif(!$a->hasRole('Admin') and $b->hasRole('Admin')){
+                return -1;
+
+            }
+            if($a->hasRole('Secretaria') and !$b->hasRole('Secretaria')){
+                return 1;
+
+            }elseif(!$a->hasRole('Secretaria') and $b->hasRole('Secretaria')){
+                return -1;
+            }
+        })->reverse();
+
+        
 
         return view('users.index', compact('usuarios', 'roles'));
     }

@@ -107,15 +107,7 @@ class EmprestimoController extends Controller
         
         return redirect("/armarios");
         
-//tem que fazer consulta em armarios para poder mostrar qual emprestimo é
-    
-    //2 - qual armário que foi escolhido
-    
-    //3 - qual o dia e a hora de agora - data corrente no php
 
-    //4 - criar uma nova instância de empréstimo com os dados 1, 2 e 3 
-
-    //5 - persistir o objeto criado
 
 
     }

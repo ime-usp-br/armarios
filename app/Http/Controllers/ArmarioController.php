@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateArmarioRequest;
 use App\Models\Armario;
 use App\Http\Controllers\EmprestimoController;
 use App\Models\Emprestimo;
+use Carbon\Carbon;
 
 class ArmarioController extends Controller
 {
@@ -21,8 +22,12 @@ class ArmarioController extends Controller
     public function index()
     {
         $armarios = Armario::all()->sortBy("numero");
+        $today = Carbon::today()->format('d/m/Y');
+        
+        
         return view('armarios.index',[
-            'armarios' => $armarios
+            'armarios' => $armarios,
+            
         ]);
     }
 
@@ -46,8 +51,7 @@ class ArmarioController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function createEmLote()
-    {
-        
+    {        
         return view('armarios.createEmLote',[
             'armario' => new Armario,
         ]);
@@ -56,9 +60,8 @@ class ArmarioController extends Controller
     public function storeEmLote(CriacaoEmLoteArmarioRequest $request)
     {
         $validated = $request->validated();
-
         for ($i = $validated["numero_inicial"]; $i <= $validated["numero_final"]; $i++){
-            Armario::updateOrCreate(["numero"=>$i],["estado"=>$validated["estado"]]);
+            Armario::firstOrCreate(["numero"=>$i],["estado"=>'Disponível']);
         }
 
         return redirect("/armarios");
@@ -80,7 +83,7 @@ class ArmarioController extends Controller
     {
         $armario = new Armario;
         $armario->numero = $request->numero;
-        $armario->estado = $request->estado;
+        $armario->estado = 'Disponível';
         $armario->save();
         return redirect("/armarios/{$armario->id}");
     }
@@ -146,5 +149,12 @@ class ArmarioController extends Controller
     {
         $armario->delete();
         return redirect('/armarios');
+    }
+
+    public function getEmprestimoAtivo()
+    {
+        return view('armarios.create',[
+            'armario' => new Armario,
+        ]);
     }
 }
