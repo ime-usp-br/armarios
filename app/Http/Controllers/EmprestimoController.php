@@ -6,6 +6,8 @@ use App\Models\Emprestimo;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ArmarioController;
 use App\Models\Armario;
+use App\Http\Requests\EmprestimoRequest;
+use Session;
 
 
 class EmprestimoController extends Controller
@@ -89,19 +91,46 @@ class EmprestimoController extends Controller
         //
     }
 
-    public function emprestimo(Armario $armario)
+    public function emprestimo(EmprestimoRequest $request)
     {
-        date_default_timezone_set('America/Sao_Paulo');
-        $validated['user_id'] = auth()->user()->id;
-        $validated['armario_id'] = $armario->id;
+        $validated = $request->validated();
+        $armario = Armario::where('numero',$validated['numero'])->first();
+        
+        if(!$armario){
+            Session::flash("alert-warning", "Armário não existe");
+            return back();
+        }elseif($armario->estado == 'Emprestado'){
+            Session::flash("alert-warning", "Armário já emprestado");
+            return back();
+        
+        }else{
+            
+            $armario->estado = 'Emprestado';
+            $armario->save();
+            $emprestimo = new Emprestimo;
+            $emprestimo->user_id = auth()->user()->id;
+            $emprestimo->armario_id = $armario->id;
+            $emprestimo->save();
+        }
 
-        $armario->estado = 'Emprestado';
-        $armario->save();
+       
 
-        $emprestimo = new Emprestimo;
-        $emprestimo->user_id = auth()->user()->id;
-        $emprestimo->armario_id = $armario->id;
-        $emprestimo->save();
+
+
+
+
+
+        //date_default_timezone_set('America/Sao_Paulo');
+        //$validated['user_id'] = auth()->user()->id;
+        //$validated['armario_id'] = $armario->id;
+
+        //$armario->estado = 'Emprestado';
+        //$armario->save();
+
+        //$emprestimo = new Emprestimo;
+        //$emprestimo->user_id = auth()->user()->id;
+        //$emprestimo->armario_id = $armario->id;
+        //$emprestimo->save();
       
         
         

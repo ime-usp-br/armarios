@@ -10,9 +10,9 @@ use App\Http\Controllers\UserController;
 
 
 
-Route::get('/', [ArmarioController::class, 'index']);
-Route::get('/emprestimo', [EmprestimoController::class, 'index']);
-Route::get('/armarios/{armario}/emprestimo',[EmprestimoController::class,'emprestimo'])->name("armarios.emprestimo");
+Route::get('/armarios', [ArmarioController::class, 'index']);
+Route::get('/', [EmprestimoController::class, 'index']);
+Route::post('/armarios/emprestimo',[EmprestimoController::class,'emprestimo'])->name("armarios.emprestimo");
 
 
 Route::get('/armarios/create/emLote', [ArmarioController::class, 'createEmLote'])->name('armarios.createEmLote');

@@ -43,6 +43,7 @@ $menu = [
     [
         'text' => '<i class="fas fa-home"></i> Armários',
         'url' => 'armarios',
+        'can' => 'admin'
     ],
     [
         # este item de menu será substituido no momento da renderização
@@ -62,7 +63,7 @@ $menu = [
     ],
     [
         'text' => 'Solicitar empréstimo',
-        'url' => config('app.url') . '/emprestimo', // com caminho absoluto
+        'url' => config('app.url') . '/', // com caminho absoluto
         'can' => 'user',
     ],
     

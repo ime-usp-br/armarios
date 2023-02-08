@@ -68,4 +68,32 @@ class User extends Authenticatable
 
     }
 
+    public static function getVinculosFromReplicadoByCodpes($codpes)
+    {
+        $query = " SELECT VP.tipvin, VP.dtafimvin, VP.tipfnc";
+        $query .= " FROM VINCULOPESSOAUSP AS VP";
+        $query .= " WHERE VP.codpes = :codpes";
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        $res = array_unique(DB::fetchAll($query, $param),SORT_REGULAR);
+        
+        $vinculos = [];
+        foreach($res as $r){
+            if(!$r['dtafimvin']){
+                if( str_contains($r['tipvin'], 'ALUNOPOS') || str_contains($r['tipvin'], 'ALUNOPOSESP')){
+                    array_push($vinculos, 'Aluno');
+                }elseif(str_contains($r['tipvin'], 'SERVIDOR')){
+                    if($r['tipfnc'] == 'Docente'){
+                        array_push($vinculos, 'Docente');
+                    }
+                }
+            }
+        }
+
+        return $vinculos;
+    }
 }
+
+
