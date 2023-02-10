@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Emprestimo;
 use Uspdev\Replicado\DB;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -82,7 +83,7 @@ class User extends Authenticatable
         $vinculos = [];
         foreach($res as $r){
             if(!$r['dtafimvin']){
-                if( str_contains($r['tipvin'], 'ALUNOPOS') || str_contains($r['tipvin'], 'ALUNOPOSESP')){
+                if( str_contains($r['tipvin'], 'ALUNOPOS') || str_contains($r['tipvin'], 'ALUNOPOSESP') || str_contains($r['tipvin'], 'ALUNOGR')){
                     array_push($vinculos, 'Aluno');
                 }elseif(str_contains($r['tipvin'], 'SERVIDOR')){
                     if($r['tipfnc'] == 'Docente'){
@@ -94,6 +95,25 @@ class User extends Authenticatable
 
         return $vinculos;
     }
+
+
+    public static function testDataDepositoTese($codpes)
+    {
+
+        $query = " SELECT dtadpopgm";
+        $query .= " FROM AGPROGRAMA AS AP";
+        $query .= " WHERE AP.codpes = :codpes";
+        $query .= " AND AP.vinalupgm = :vinalupgm";
+        $param = [
+            'codpes' => $codpes,
+            'vinalupgm' => 'REGULAR'
+        ];
+
+
+        $res = array_unique(DB::fetchAll($query, $param),SORT_REGULAR);
+        return $res ? Carbon::createFromFormat('Y-m-d H:i:s',$res[0]['dtadpopgm'])->format('d/m/Y'):null;
+    }
+
 }
 
 

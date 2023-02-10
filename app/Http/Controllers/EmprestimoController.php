@@ -6,6 +6,8 @@ use App\Models\Emprestimo;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ArmarioController;
 use App\Models\Armario;
+use Uspdev\Replicado\DB;
+use App\Models\User;
 use App\Http\Requests\EmprestimoRequest;
 use Session;
 
@@ -110,6 +112,14 @@ class EmprestimoController extends Controller
             $emprestimo = new Emprestimo;
             $emprestimo->user_id = auth()->user()->id;
             $emprestimo->armario_id = $armario->id;
+            $user = User::find($emprestimo->user_id);
+            $codpes = $user->codpes;
+            $dataprev = User::testDataDepositoTese($codpes);
+            if($dataprev){
+                $emprestimo->dataprev = $dataprev;
+
+            }
+            
             $emprestimo->save();
         }
 
