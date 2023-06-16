@@ -9,6 +9,7 @@ use App\Models\Armario;
 use Uspdev\Replicado\DB;
 use App\Models\User;
 use App\Http\Requests\EmprestimoRequest;
+use Auth;
 use Session;
 
 
@@ -93,34 +94,25 @@ class EmprestimoController extends Controller
         //
     }
 
-    public function emprestimo(EmprestimoRequest $request)
+    public function emprestimo(Armario $armario)
     {
-        $validated = $request->validated();
-        $armario = Armario::where('numero',$validated['numero'])->first();
-        
-        if(!$armario){
-            Session::flash("alert-warning", "Armário não existe");
+        if(!Auth::user()->isAluno()){
+            abort(403);
+        }
+        if (Emprestimo::where('user_id',auth()->user()->id)->first()){
+            Session::flash('alert-warning', 'Usuário já possui empréstimo de armário.');
             return back();
-        }elseif($armario->estado == 'Emprestado'){
-            Session::flash("alert-warning", "Armário já emprestado");
-            return back();
-        
-        }else{
-            
-            $armario->estado = 'Emprestado';
-            $armario->save();
-            $emprestimo = new Emprestimo;
-            $emprestimo->user_id = auth()->user()->id;
-            $emprestimo->armario_id = $armario->id;
-            $user = User::find($emprestimo->user_id);
-            $codpes = $user->codpes;
-            $dataprev = User::testDataDepositoTese($codpes);
-            if($dataprev){
-                $emprestimo->dataprev = $dataprev;
+        }
+        $armario->estado = 'Emprestado';
+        $armario->save();
 
-            }
-            
-            $emprestimo->save();
+        $emprestimo = new Emprestimo;
+        $emprestimo->user_id = auth()->user()->id;
+       
+        $emprestimo->armario_id = $armario->id;
+        $emprestimo->save();
+        return redirect("/armarios");
+        
         }
 
        
@@ -144,12 +136,10 @@ class EmprestimoController extends Controller
       
         
         
-        return redirect("/armarios");
         
 
 
-
-    }
+    
 }
 
 

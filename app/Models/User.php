@@ -76,6 +76,7 @@ class User extends Authenticatable
         $query .= " WHERE VP.codpes = :codpes";
         $param = [
             'codpes' => $codpes,
+            
         ];
 
         $res = array_unique(DB::fetchAll($query, $param),SORT_REGULAR);
@@ -83,7 +84,7 @@ class User extends Authenticatable
         $vinculos = [];
         foreach($res as $r){
             if(!$r['dtafimvin']){
-                if( str_contains($r['tipvin'], 'ALUNOPOS') || str_contains($r['tipvin'], 'ALUNOPOSESP') || str_contains($r['tipvin'], 'ALUNOGR')){
+                if( str_contains($r['tipvin'], 'ALUNOPOS') || str_contains($r['tipvin'], 'ALUNOPOSESP')){
                     array_push($vinculos, 'Aluno');
                 }elseif(str_contains($r['tipvin'], 'SERVIDOR')){
                     if($r['tipfnc'] == 'Docente'){
@@ -114,6 +115,14 @@ class User extends Authenticatable
         return $res ? Carbon::createFromFormat('Y-m-d H:i:s',$res[0]['dtadpopgm'])->format('d/m/Y'):null;
     }
 
+
+
+    public function isAluno()
+    {
+        $vinculos = self::getVinculosFromReplicadoByCodpes($this->codpes);
+        return in_array('Aluno', $vinculos);
+    }
+
+
+
 }
-
-
