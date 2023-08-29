@@ -114,26 +114,17 @@ class EmprestimoController extends Controller
         return redirect("/armarios");
         
         }
+    
+    
 
-       
-
-
-
-
+    
 
 
-        //date_default_timezone_set('America/Sao_Paulo');
-        //$validated['user_id'] = auth()->user()->id;
-        //$validated['armario_id'] = $armario->id;
 
-        //$armario->estado = 'Emprestado';
-        //$armario->save();
 
-        //$emprestimo = new Emprestimo;
-        //$emprestimo->user_id = auth()->user()->id;
-        //$emprestimo->armario_id = $armario->id;
-        //$emprestimo->save();
-      
+
+
+     
         
         
         

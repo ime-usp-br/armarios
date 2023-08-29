@@ -11,6 +11,8 @@ use App\Http\Controllers\UserController;
 
 
 Route::get('/armarios', [ArmarioController::class, 'index']);
+Route::post('/armarios/{armario}/liberar', [ArmarioController::class, 'liberar'])->name('armarios.liberar');
+
 Route::get('/', [EmprestimoController::class, 'index']);
 Route::post('/armarios/{armario}/emprestimo',[EmprestimoController::class,'emprestimo'])->name("armarios.emprestimo");
 

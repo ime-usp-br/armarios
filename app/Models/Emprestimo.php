@@ -23,15 +23,27 @@ class Emprestimo extends Model
 
     protected $casts = [
         'dataprev' => 'date:d/m/Y',
+        'datafinal'=> 'date:d/m/Y',
         
     ];
 
     public function setDataprevAttribute($value)
     {
         $this->attributes['dataprev'] = Carbon::createFromFormat('d/m/Y', $value);
+    
     }
-
+        
+    public function setDatafinalAttribute($value)
+    
+    {
+        $this->attributes['datafinal'] = Carbon::createFromFormat('d/m/Y', $value);
+    
+    }
     public function getDataprevAttribute($value)
+    {
+        return $value ? Carbon::parse($value)->format('d/m/Y') : '';
+    }
+    public function getDatafinalAttribute($value)
     {
         return $value ? Carbon::parse($value)->format('d/m/Y') : '';
     }

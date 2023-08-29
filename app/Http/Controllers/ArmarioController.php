@@ -25,6 +25,7 @@ class ArmarioController extends Controller
         $today = Carbon::today()->format('d/m/Y');
         
         
+        
         return view('armarios.index',[
             'armarios' => $armarios,
             
@@ -157,4 +158,27 @@ class ArmarioController extends Controller
             'armario' => new Armario,
         ]);
     }
+    public function emprestimoAtivo()
+    {
+        return $this->emprestimos()->whereNull('datafim')->first();
+    }
+    
+    public function liberar(Armario $armario)
+    {
+        // Verifique se há um empréstimo ativo para este armário
+        $emprestimo = $armario->emprestimoAtivo();
+
+        if ($emprestimo) {
+            // Exclua o registro de empréstimo
+            $emprestimo->delete();
+        }
+
+            // Atualize o estado do armário para "Disponível"
+        $armario->update(['estado' => 'Disponível']);
+
+        // Redirecione de volta para a página de listagem de armários ou para onde desejar
+        return redirect()->route('armarios.index')->with('success', 'Armário liberado com sucesso.');
+    }
+    
+   
 }
