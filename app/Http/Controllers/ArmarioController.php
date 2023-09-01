@@ -21,6 +21,20 @@ class ArmarioController extends Controller
      */
     public function index()
     {
+        if (auth()->check()) {
+            // Verifique se o usuário tem a role "Admin" OU "Secretaria".
+            if (auth()->user()->hasRole(['Admin', 'Secretaria'])) {
+                // Se o usuário tiver uma dessas roles, continue com a exibição dos armários.
+                $armarios = Armario::all()->sortBy("numero");
+    
+                return view('armarios.index', [
+                    'armarios' => $armarios,
+                ]);
+            }
+        }
+    
+        // Se o usuário não estiver autenticado ou não tiver as roles, redirecione-o para uma página de erro 403 (acesso proibido) ou execute outra ação apropriada.
+        abort(403);
         $armarios = Armario::all()->sortBy("numero");
         $today = Carbon::today()->format('d/m/Y');
         
@@ -39,9 +53,21 @@ class ArmarioController extends Controller
      */
     public function create()
     {
-        return view('armarios.create',[
-            'armario' => new Armario,
-        ]);
+
+        if (auth()->check()) {
+            // Verifique se o usuário tem a role "Admin" OU "Secretaria".
+            if (auth()->user()->hasRole(['Admin', 'Secretaria'])) {
+                
+    
+                return view('armarios.create',[
+                    'armario' => new Armario,
+                ]);
+            }
+        }
+    
+        // Se o usuário não estiver autenticado ou não tiver as roles, redirecione-o para uma página de erro 403 (acesso proibido) ou execute outra ação apropriada.
+        abort(403);
+        
     }
 
 
@@ -53,9 +79,21 @@ class ArmarioController extends Controller
      */
     public function createEmLote()
     {        
-        return view('armarios.createEmLote',[
-            'armario' => new Armario,
-        ]);
+        
+        if (auth()->check()) {
+            // Verifique se o usuário tem a role "Admin" OU "Secretaria".
+            if (auth()->user()->hasRole(['Admin', 'Secretaria'])) {
+                
+    
+                return view('armarios.createEmLote',[
+                    'armario' => new Armario,
+                ]);
+            }
+        }
+    
+        // Se o usuário não estiver autenticado ou não tiver as roles, redirecione-o para uma página de erro 403 (acesso proibido) ou execute outra ação apropriada.
+        abort(403);
+        
     }    
 
     public function storeEmLote(CriacaoEmLoteArmarioRequest $request)
@@ -119,9 +157,20 @@ class ArmarioController extends Controller
      */
     public function edit(Armario $armario)
     {
-        return view('armarios.edit',[
-            'armario' => $armario
-        ]);
+        if (auth()->check()) {
+            // Verifique se o usuário tem a role "Admin" OU "Secretaria".
+            if (auth()->user()->hasRole(['Admin', 'Secretaria'])) {
+                
+    
+                return view('armarios.edit',[
+                    'armario' => $armario
+                ]);
+            }
+        }
+    
+        // Se o usuário não estiver autenticado ou não tiver as roles, redirecione-o para uma página de erro 403 (acesso proibido) ou execute outra ação apropriada.
+        abort(403);
+        
     }
 
     /**

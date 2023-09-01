@@ -10,6 +10,14 @@ class UserController extends Controller
 {
     public function index()
     {
+        if (auth()->check()) {
+            // Verifique se o usuário tem a role "Admin" OU "Secretaria".
+            if (!auth()->user()->hasRole(['Admin', 'Secretaria'])) {
+                abort(403);
+            }
+        }
+    
+        // Se o usuário não estiver autenticado ou não tiver as roles, redirecione-o para uma página de erro 403 (acesso proibido) ou execute outra ação apropriada.
         
 
         $perfisEspeciais = ['Administrador', 'Secretaria'];

@@ -8,9 +8,12 @@ use App\Http\Controllers\UserController;
 
 
 
+Route::get('/', function () {
+    return view('Empréstimo de armários'); // Substitua 'welcome' pelo nome da sua página inicial.
+});
 
 
-Route::get('/armarios', [ArmarioController::class, 'index']);
+Route::get('/armarios', [ArmarioController::class, 'index'])->middleware(['auth']);
 Route::post('/armarios/{armario}/liberar', [ArmarioController::class, 'liberar'])->name('armarios.liberar');
 
 Route::get('/', [EmprestimoController::class, 'index']);

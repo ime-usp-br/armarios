@@ -12,7 +12,7 @@
         </tr>
         @foreach($armarios as $armario)
             <tr>
-                <td> <a href="/armarios/{{$armario->id}}">{{ $armario->numero }}</a></td>
+                <td>{{ $armario->numero }}</td>
                 <td>{{ $armario->estado }}</td>
                 <td>
                     <form method="POST" action="{{ route('armarios.emprestimo', $armario) }}">

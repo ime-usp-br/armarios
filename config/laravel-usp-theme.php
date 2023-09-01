@@ -67,14 +67,10 @@ $menu = [
         'can' => 'user',
     ],
     
+    
     [
-        'text' => 'Menu gerente',
-        'url' => 'gerente',
-        'can' => 'gerente',
-    ],
-    [
-        'text' => 'Menu admin',
-        'submenu' => $admin,
+        'text' => 'Usuários',
+        'url' => 'users',
         'can' => 'admin',
     ],
 ];

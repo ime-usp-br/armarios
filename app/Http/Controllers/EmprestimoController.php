@@ -11,6 +11,9 @@ use App\Models\User;
 use App\Http\Requests\EmprestimoRequest;
 use Auth;
 use Session;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SistemaDeArmarios;
+
 
 
 class EmprestimoController extends Controller
@@ -22,6 +25,7 @@ class EmprestimoController extends Controller
      */
     public function index()
     {
+
         $armarios = Armario::where("estado", "Disponível")->get()->sortBy('numero');
         return view('emprestimos.index',[
             'armarios' => $armarios
@@ -96,8 +100,11 @@ class EmprestimoController extends Controller
 
     public function emprestimo(Armario $armario)
     {
-        if(!Auth::user()->isAluno()){
-            abort(403);
+        if (auth()->check()) {
+            // Verifique se o usuário tem a role "Admin" OU "Secretaria".
+            if (!auth()->user()->hasRole(['Admin', 'Secretaria'])) {
+                abort(403);
+            }
         }
         if (Emprestimo::where('user_id',auth()->user()->id)->first()){
             Session::flash('alert-warning', 'Usuário já possui empréstimo de armário.');
@@ -111,6 +118,7 @@ class EmprestimoController extends Controller
        
         $emprestimo->armario_id = $armario->id;
         $emprestimo->save();
+        Mail::to(auth()->user()->email)->send(new SistemaDeArmarios(auth()->user(), $armario));
         return redirect("/armarios");
         
         }
