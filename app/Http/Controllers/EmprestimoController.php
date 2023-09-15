@@ -102,7 +102,7 @@ class EmprestimoController extends Controller
     {
         if (auth()->check()) {
             // Verifique se o usuário tem a role "Admin" OU "Secretaria".
-            if (!auth()->user()->hasRole(['Admin', 'Secretaria'])) {
+            if (!auth()->user()->hasRole(['Aluno de pós'])) {
                 abort(403);
             }
         }
@@ -110,6 +110,8 @@ class EmprestimoController extends Controller
             Session::flash('alert-warning', 'Usuário já possui empréstimo de armário.');
             return back();
         }
+        $user = auth()->user();
+        
         $armario->estado = 'Emprestado';
         $armario->save();
 
@@ -118,7 +120,9 @@ class EmprestimoController extends Controller
        
         $emprestimo->armario_id = $armario->id;
         $emprestimo->save();
-        Mail::to(auth()->user()->email)->send(new SistemaDeArmarios(auth()->user(), $armario));
+       
+        Mail::to($user->email)->send(new SistemaDeArmarios($user, $armario));
+        
         return redirect("/armarios");
         
         }

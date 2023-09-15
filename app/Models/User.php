@@ -10,6 +10,8 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Models\Emprestimo;
 use Uspdev\Replicado\DB;
 use Carbon\Carbon;
+use Spatie\Permission\Models\Role;
+
 
 class User extends Authenticatable
 {
@@ -119,8 +121,13 @@ class User extends Authenticatable
 
     public function isAluno()
     {
-        $vinculos = self::getVinculosFromReplicadoByCodpes($this->codpes);
-        return in_array('Aluno', $vinculos);
+    $vinculos = self::getVinculosFromReplicadoByCodpes($this->codpes);
+    if (in_array('Aluno', $vinculos)) {
+        $role = Role::findByName('Aluno de pós'); 
+        $this->assignRole($role);
+        return true;
+    }
+    return false;
     }
 
 

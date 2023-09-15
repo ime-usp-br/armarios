@@ -9,7 +9,7 @@ use App\Http\Controllers\UserController;
 
 
 Route::get('/', function () {
-    return view('Empréstimo de armários'); // Substitua 'welcome' pelo nome da sua página inicial.
+    return view('Empréstimo de armários'); 
 });
 
 
@@ -25,3 +25,6 @@ Route::post('/armarios/store/emLote', [ArmarioController::class, 'storeEmLote'])
 Route::resource('armarios',ArmarioController::class);
 Route::resource('emprestimos',EmprestimoController::class);
 Route::resource('users', UserController::class);
+Route::get('/mail-preview', function () {
+    return new App\Mail\SistemaDeArmarios(auth()->user(), $armario);
+});

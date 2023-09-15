@@ -46,11 +46,15 @@
             @endif
         </td>
         <td>
-            <form action="{{ route('armarios.liberar', $armario) }}" method="post">
-                @csrf
-                @method('POST')
-                <button type="submit" onclick="return confirm('Tem certeza?');">Liberar armário</button>
-            </form>
+            @if ($armario->estado === 'Emprestado')
+                <form action="{{ route('armarios.liberar', $armario) }}" method="post">
+                    @csrf
+                    @method('POST')
+                    <button type="submit" onclick="return confirm('Tem certeza?');">Liberar armário</button>
+                </form>
+            @else
+            <!-- Exibir uma mensagem ou valor vazio quando o estado não for "Emprestado" -->
+            @endif
         </td>
     </tr>
 
