@@ -13,12 +13,21 @@
     </tr>
     @foreach($armarios as $armario)
     @php
-    if ($armario->emprestimoAtivo() && $armario->emprestimoAtivo()->dataprev <= \Carbon\Carbon::today()->format('d/m/Y') && \Carbon\Carbon::today()->format('m/d/Y') <= $armario->emprestimoAtivo()->datafinal) {
-    $color = "table-danger";
-    } else {
     $color = "";
-    }
     $emprestimo = $armario->emprestimoAtivo();
+
+    if ($emprestimo) {
+        // Verifique se a data prevista e a data final são válidas antes de formatá-las
+        $dataPrevista = DateTime::createFromFormat('d/m/Y', $emprestimo->dataprev);
+        $dataFinal = DateTime::createFromFormat('d/m/Y', $emprestimo->datafinal);
+
+        if ($dataPrevista && $dataFinal) {
+            if ($dataPrevista->format('Y-m-d') <= \Carbon\Carbon::today()->format('Y-m-d') &&
+                \Carbon\Carbon::today()->format('Y-m-d') <= $dataFinal->format('Y-m-d')) {
+                $color = "table-danger";
+            }
+        }
+    }
     @endphp
 
     <tr class={{$color}}>
@@ -53,13 +62,11 @@
                     <button type="submit" onclick="return confirm('Tem certeza?');">Liberar armário</button>
                 </form>
             @else
-            <!-- Exibir uma mensagem ou valor vazio quando o estado não for "Emprestado" -->
+                <!-- Exibir uma mensagem ou valor vazio quando o estado não for "Emprestado" -->
             @endif
         </td>
     </tr>
-
     @endforeach
-
 </table>
 
 @endsection

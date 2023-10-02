@@ -17,12 +17,17 @@
                 <td>
                     <form method="POST" action="{{ route('armarios.emprestimo', $armario) }}">
                         @csrf
-                        <button id="btn-addEvent" class="btn btn-outline-primary" type="submit">Solicitar empréstimo</button>
+                        <button id="btn-addEvent" class="btn btn-outline-primary" type="submit" onclick="return confirm('Tem certeza?');">Solicitar empréstimo</button>
                     </form>
+
                 </td>
             </tr>
+            
         @endforeach
     </table>
+    <div class="alert alert-danger">
+        É necessário estar logado para solicitar empréstimo.
+    </div>
 @else
     <div class="alert alert-danger">
         É necessário estar logado para solicitar empréstimo.

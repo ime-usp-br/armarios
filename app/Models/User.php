@@ -27,6 +27,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'dataDefesa',
         'password',
     ];
 
@@ -50,7 +51,7 @@ class User extends Authenticatable
     ];
 
     public function emprestimos(){
-        return $this->hasToMany(Emprestimo::class); 
+        return $this->hasMany(Emprestimo::class, 'user_id'); // Substitua 'user_id' pelo nome da chave estrangeira correta
     }
 
     public static function test($codpes)
@@ -87,7 +88,7 @@ class User extends Authenticatable
         foreach($res as $r){
             if(!$r['dtafimvin']){
                 if( str_contains($r['tipvin'], 'ALUNOPOS') || str_contains($r['tipvin'], 'ALUNOPOSESP')){
-                    array_push($vinculos, 'Aluno');
+                    array_push($vinculos, 'Aluno de pós');
                 }elseif(str_contains($r['tipvin'], 'SERVIDOR')){
                     if($r['tipfnc'] == 'Docente'){
                         array_push($vinculos, 'Docente');
@@ -100,22 +101,27 @@ class User extends Authenticatable
     }
 
 
-    public static function testDataDepositoTese($codpes)
-    {
+    public static function testDataDefesa($codpes)
+    {  
+    $query = " SELECT dtadfapgm";
+    $query .= " FROM AGPROGRAMA AS AP";
+    $query .= " WHERE AP.codpes = :codpes";
+    $query .= " AND AP.vinalupgm = :vinalupgm";
+    $param = [
+        'codpes' => $codpes,
+        'vinalupgm' => 'REGULAR'
+    ];
 
-        $query = " SELECT dtadpopgm";
-        $query .= " FROM AGPROGRAMA AS AP";
-        $query .= " WHERE AP.codpes = :codpes";
-        $query .= " AND AP.vinalupgm = :vinalupgm";
-        $param = [
-            'codpes' => $codpes,
-            'vinalupgm' => 'REGULAR'
-        ];
+    $res = array_unique(DB::fetchAll($query, $param), SORT_REGULAR);
 
-
-        $res = array_unique(DB::fetchAll($query, $param),SORT_REGULAR);
-        return $res ? Carbon::createFromFormat('Y-m-d H:i:s',$res[0]['dtadpopgm'])->format('d/m/Y'):null;
+    if ($res && !empty($res[0]['dtadfapgm'])) {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $res[0]['dtadfapgm']);
+    } else {
+        return null;
     }
+    
+    }
+    
 
 
 
@@ -130,6 +136,21 @@ class User extends Authenticatable
     return false;
     }
 
-
+    public function setDataDefesaAttribute($value)
+    {
+        $user = auth()->user(); // Obtém o usuário logado
+    
+        if ($user) {
+            $codpes = $user->codpes; // Obtém o código do usuário logado
+    
+            // Chame o método testDataDefesa para obter a data de defesa.
+            $dataDefesa = self::testDataDefesa($codpes);
+    
+            // Atribua a data de defesa à coluna dataDefesa se existir.
+            if ($dataDefesa) {
+                $this->attributes['dataDefesa'] = $dataDefesa;
+            }
+        }
+    }
 
 }

@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreArmarioRequest;
 use App\Http\Requests\CriacaoEmLoteArmarioRequest;
-
-
 use App\Http\Requests\UpdateArmarioRequest;
 use App\Models\Armario;
 use App\Http\Controllers\EmprestimoController;

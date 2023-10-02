@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ArmarioSeeder::class,
             UserSeeder::class,
-            RolesandPermission::class,
+            RolesAndPermissionsSeeder::class,
         ]);
     }
 }
