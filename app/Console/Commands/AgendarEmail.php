@@ -4,6 +4,9 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
+use App\Models\User;
+use App\Mail\AvisoPrazoEmprestimo;
 
 class AgendarEmail extends Command
 {
@@ -13,12 +16,14 @@ class AgendarEmail extends Command
      * @var string
      */
     protected $signature = 'agendar:email';
+
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Agendar e-mails de lembrete';
+
     /**
      * Create a new command instance.
      *
@@ -36,21 +41,26 @@ class AgendarEmail extends Command
      */
     public function handle()
     {
-    $prazoLimite = \Carbon\Carbon::today()->addDays(30);
-    $users = \App\Models\User::has('emprestimos')->get();
+        $prazoLimite = Carbon::today();
+        $users = User::has('emprestimos')->get();
 
-    foreach ($users as $user) {
-        $emprestimos = $user->emprestimos()->get();
+        foreach ($users as $user) {
+            $emprestimos = $user->emprestimos;
 
-        foreach ($emprestimos as $emprestimo) {
-            // Converta a coluna dataprev para um objeto Carbon
-            $dataprev = \Carbon\Carbon::createFromFormat('Y-m-d', $emprestimo->dataprev);
+            foreach ($emprestimos as $emprestimo) {
+                $dataprevParts = explode('/', $emprestimo->dataprev);
+                if (count($dataprevParts) === 3) {
+                    $dataprevFormatted = $dataprevParts[2] . '-' . $dataprevParts[1] . '-' . $dataprevParts[0];
+                } else {
+                    continue;
+                }
 
-            // Verifique se a data é maior ou igual ao prazo limite
-            if ($dataprev->greaterThanOrEqualTo($prazoLimite)) {
-                Mail::to($user->email)->send(new AvisoPrazoEmprestimo($user, $emprestimo));
+                $dataprev = Carbon::createFromFormat('Y-m-d', $dataprevFormatted);
+
+                if ($prazoLimite->greaterThanOrEqualTo($dataprev)) {
+                    Mail::to($user->email)->send(new AvisoPrazoEmprestimo($user, $emprestimo));
+                }
             }
         }
     }
-    }   
 }

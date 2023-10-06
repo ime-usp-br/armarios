@@ -22,7 +22,7 @@ class AvisoPrazoEmprestimo extends Mailable
      * 
      */
     public $user, $emprestimo;
-    public function __construct()
+    public function __construct($user, $emprestimo)
     {
         $this->user = $user;
         
