@@ -101,10 +101,10 @@ class EmprestimoController extends Controller
 
     public function emprestimo(Armario $armario)
     {
-        if(!Auth::user()->isAluno()){
-            abort(403);
+        //if(!Auth::user()->isAluno()){
+          //  abort(403);
         
-        }
+        //}
         if (Emprestimo::where('user_id',auth()->user()->id)->first()){
             Session::flash('alert-warning', 'Usuário já possui empréstimo de armário.');
             return back();
@@ -136,7 +136,7 @@ class EmprestimoController extends Controller
         
         Mail::to($user->email)->send(new SistemaDeArmarios($user, $armario));
         $emprestimo->save();
-       
+        Session::flash('success', 'Empréstimo realizado com sucesso!');
         
         
         return redirect("/");

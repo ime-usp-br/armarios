@@ -15,9 +15,9 @@
     @php
     $color = "";
     $emprestimo = $armario->emprestimoAtivo();
+    $dataprev = null; // Inicializa a variável $dataprev com nulo
 
     if ($emprestimo) {
-        // Verifique se a data prevista e a data final são válidas antes de formatá-las
         $dataPrevista = DateTime::createFromFormat('d/m/Y', $emprestimo->dataprev);
         $dataFinal = DateTime::createFromFormat('d/m/Y', $emprestimo->datafinal);
 
@@ -27,6 +27,9 @@
                 $color = "table-danger";
             }
         }
+
+        // Busca a data mais recente da defesa do usuário
+        $dataprev = \App\Models\Emprestimo::where('user_id', $emprestimo->user->id)->pluck('dataprev')->first();
     }
     @endphp
 
@@ -37,21 +40,18 @@
             @if ($emprestimo)
                 {{ $emprestimo->user->name }}
             @else
-                <!-- Exibir um valor vazio ou mensagem quando não houver empréstimo -->
             @endif
         </td>
         <td>
-            @if ($emprestimo)
-                {{ $emprestimo->dataprev }}
+            @if ($dataprev)
+                {{ $dataprev }}
             @else
-                <!-- Exibir um valor vazio ou mensagem quando não houver empréstimo -->
             @endif
         </td>
         <td>
             @if ($emprestimo)
                 {{ $emprestimo->datafinal }}
             @else
-                <!-- Exibir um valor vazio ou mensagem quando não houver empréstimo -->
             @endif
         </td>
         <td>
@@ -62,7 +62,6 @@
                     <button type="submit" onclick="return confirm('Tem certeza?');">Liberar armário</button>
                 </form>
             @else
-                <!-- Exibir uma mensagem ou valor vazio quando o estado não for "Emprestado" -->
             @endif
         </td>
     </tr>
