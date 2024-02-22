@@ -9,6 +9,9 @@ use App\Models\Armario;
 use App\Http\Controllers\EmprestimoController;
 use App\Models\Emprestimo;
 use Carbon\Carbon;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\LiberarArmario;
 
 class ArmarioController extends Controller
 {
@@ -214,14 +217,15 @@ class ArmarioController extends Controller
     {
         // Verifique se há um empréstimo ativo para este armário
         $emprestimo = $armario->emprestimoAtivo();
-
+        $user = User::where('id',$emprestimo->user_id)->first();
         if ($emprestimo) {
             // Exclua o registro de empréstimo
             $emprestimo->delete();
         }
-
+        Mail::to($user->email)->send(new LiberarArmario($user, $armario));
             // Atualize o estado do armário para "Disponível"
         $armario->update(['estado' => 'Disponível']);
+        
 
         // Redirecione de volta para a página de listagem de armários ou para onde desejar
         return redirect()->route('armarios.index')->with('success', 'Armário liberado com sucesso.');

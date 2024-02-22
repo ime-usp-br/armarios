@@ -57,7 +57,7 @@ class AgendarEmail extends Command
 
                 $dataprev = Carbon::createFromFormat('Y-m-d', $dataprevFormatted);
 
-                if ($prazoLimite->greaterThanOrEqualTo($dataprev)) {
+                if ($prazoLimite <= $dataprev) {
                     Mail::to($user->email)->send(new AvisoPrazoEmprestimo($user, $emprestimo));
                 }
             }

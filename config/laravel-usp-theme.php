@@ -35,44 +35,12 @@ $submenu2 = [
     [
         'text' => 'SubItem 2',
         'url' => 'subitem2',
-        'can' => 'admin',
+        'can' => 'admin', 
     ],
 ];
 
 $menu = [
-    [
-        'text' => '<i class="fas fa-home"></i> Armários',
-        'url' => 'armarios',
-        'can' => 'admin'
-    ],
-    [
-        # este item de menu será substituido no momento da renderização
-        'key' => 'menu_dinamico',
-        
-    ],
-    [
-        'text' => 'Cadastrar armário',
-        'url' => 'armarios/create',
-        
-        'can' => 'admin',
-    ],
-    [
-        'text' => 'Cadastrar armários em lote',
-        'url' => "/armarios/create/emLote", // com caminho absoluto
-        'can' => 'admin',
-    ],
-    [
-        'text' => 'Solicitar empréstimo',
-        'url' => config('app.url') . '/', // com caminho absoluto
-        'can' => 'user',
-    ],
     
-    
-    [
-        'text' => 'Usuários',
-        'url' => 'users',
-        'can' => 'admin',
-    ],
 ];
 
 $right_menu = [

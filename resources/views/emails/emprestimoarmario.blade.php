@@ -32,6 +32,6 @@
         <li>Objetos diversos: serão doados caso haja alguma utilidade.</li>
     </ul>
 
-    <!-- Adicione mais detalhes relevantes aqui -->
+    
 </body>
 </html>

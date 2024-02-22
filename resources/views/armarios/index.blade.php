@@ -1,6 +1,7 @@
 @extends('main')
 
 @section('content')
+@parent
 
 <table class="table table-bordered table-striped table-hover" style="font-size:15px;">
     <tr>

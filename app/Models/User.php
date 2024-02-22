@@ -153,4 +153,23 @@ class User extends Authenticatable
         }
     }
 
+    public static function booted(){
+
+        static::created(function ($user){
+            $codpes = $user->codpes;
+            if (str_contains(env('LOG_AS_ADMINISTRATOR'), $codpes)){
+                $user->assignRole("Administrador");
+            }
+            foreach($user->getVinculosFromReplicadoByCodpes($codpes) as $vinculo){
+                if ($vinculo == 'Docente'){
+                    $user->assignRole("Docente");
+                }
+                if ($vinculo == 'Aluno de pós'){
+                    $user->assignRole("Aluno de pós");
+                }
+            }
+        });
+    }
+
+
 }
