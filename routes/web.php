@@ -26,3 +26,5 @@ Route::resource('users', UserController::class);
 Route::get('/mail-preview', function () {
     return new App\Mail\SistemaDeArmarios(auth()->user(), $armario);
 });
+Route::get('/armarios/meuarmario', [EmprestimoController::class, 'meuarmario'])->name("emprestimos.meuarmario");
+

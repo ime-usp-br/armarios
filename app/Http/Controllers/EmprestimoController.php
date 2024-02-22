@@ -142,6 +142,21 @@ class EmprestimoController extends Controller
         return redirect("/");
         
     }
+
+    public function meuarmario(Armario $armario)
+    {
+        if (auth()->check()) {
+            if (auth()->user()->hasRole(['Aluno de pós'])) {
+                
+    
+                return view('emprestimos.meuarmario',[
+                ]);
+            }
+        }
+    
+        // Se o usuário não estiver autenticado ou não tiver as roles, redirecione-o para uma página de erro 403 (acesso proibido) ou execute outra ação apropriada.
+        abort(403);
+    }
        
 
 

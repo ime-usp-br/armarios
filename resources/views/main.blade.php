@@ -56,6 +56,18 @@
                         </ul>
                     </li>
                 @endif
+                @if(Auth::user()->hasRole(['Aluno de pós']))
+                    <?php $emprestimo = \App\Models\Emprestimo::where('user_id',Auth::user()->id)->first() ?>
+                    @if($emprestimo)
+                        <li>
+                            <a href="/armarios/{{$emprestimo->armario_id}}">Meu armário</a>
+                        </li>
+                    @else
+                        <li>
+                            
+                        </li>
+                    @endif
+                @endif
             </ul>
         </div>
     @endif
