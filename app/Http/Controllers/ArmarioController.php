@@ -12,6 +12,8 @@ use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\LiberarArmario;
+use App\Mail\AvisoSecLiberar;
+
 
 class ArmarioController extends Controller
 {
@@ -215,21 +217,29 @@ class ArmarioController extends Controller
     
     public function liberar(Armario $armario)
     {
-        // Verifique se há um empréstimo ativo para este armário
+        $usuario = auth()->user();
         $emprestimo = $armario->emprestimoAtivo();
-        $user = User::where('id',$emprestimo->user_id)->first();
-        if ($emprestimo) {
-            // Exclua o registro de empréstimo
-            $emprestimo->delete();
+        if (!$emprestimo) {
+            return redirect()->back()->with('error', 'O armário não possui empréstimo ativo.');
         }
-        Mail::to($user->email)->send(new LiberarArmario($user, $armario));
-            // Atualize o estado do armário para "Disponível"
-        $armario->update(['estado' => 'Disponível']);
-        
 
-        // Redirecione de volta para a página de listagem de armários ou para onde desejar
-        return redirect()->route('armarios.index')->with('success', 'Armário liberado com sucesso.');
+        $user = User::findOrFail($emprestimo->user_id);
+
+        if ($usuario->hasRole('Secretaria')) {
+            Mail::to($user->email)->send(new LiberarArmario($user, $armario));
+        }elseif ($usuario->hasRole('Aluno de pós')) {
+            $secretarias = User::with('roles')->get()->filter(fn($usuario)=>$usuario->roles->where('name','Secretaria')->toArray());
+            foreach ($secretarias as $secretaria){
+                Mail::to($secretaria->email)->send(new AvisoSecLiberar($user, $armario));
+            }
+        }
+
+        $armario->update(['estado' => 'Disponível']);
+        $emprestimo->delete();
+
+        return redirect()->route('emprestimos.index')->with('success', 'Armário liberado com sucesso.');
     }
+
     
    
 }

@@ -14,6 +14,9 @@ use Session;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SistemaDeArmarios;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use App\Mail\AvisoSecEmprestimo;
+
 
 
 
@@ -101,10 +104,10 @@ class EmprestimoController extends Controller
 
     public function emprestimo(Armario $armario)
     {
-        //if(!Auth::user()->isAluno()){
-          //  abort(403);
+        if (!auth()->user()->hasRole(['Aluno de pós'])){
+            abort(403);
         
-        //}
+        }
         if (Emprestimo::where('user_id',auth()->user()->id)->first()){
             Session::flash('alert-warning', 'Usuário já possui empréstimo de armário.');
             return back();
@@ -121,12 +124,8 @@ class EmprestimoController extends Controller
         $emprestimo->user_id = auth()->user()->id;
        
         $emprestimo->armario_id = $armario->id;
-        if($user->codpes == 11883052){
-            $emprestimo->dataprev = Carbon::today()->format('d/m/Y');
-            $datafinal = Carbon::createFromFormat('d/m/Y', $emprestimo->dataprev)->addDays(30)->format('d/m/Y');
-            $emprestimo->datafinal = $datafinal;
-
-        }elseif(User::testDataDefesa($user->codpes) == null){
+        
+        if(User::testDataDefesa($user->codpes) == null){
             
         }else{
             $emprestimo->dataprev = User::testDataDefesa($user->codpes)->format('d/m/Y');
@@ -135,6 +134,10 @@ class EmprestimoController extends Controller
         }
         
         Mail::to($user->email)->send(new SistemaDeArmarios($user, $armario));
+        $secretarias = User::with('roles')->get()->filter(fn($usuario)=>$usuario->roles->where('name','Secretaria')->toArray());
+        foreach ($secretarias as $secretaria){
+            Mail::to($secretaria->email)->send(new AvisoSecEmprestimo($user, $armario));
+        }
         $emprestimo->save();
         Session::flash('success', 'Empréstimo realizado com sucesso!');
         
