@@ -1,26 +1,37 @@
+
 @extends('main')
 
 @section('content')
 @parent
+<script>
+    var armariosDisponiveis = {!! json_encode($armarios) !!};
+</script>
 
 @if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
+    <div id=layout_conteudo>
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
     </div>
 @endif
 
 @if (session('alert-warning'))
-    <div class="alert alert-warning">
-        {{ session('alert-warning') }}
+    <div id=layout_conteudo>
+        <div class="alert alert-warning">
+            {{ session('alert-warning') }}
+        </div>
     </div>
 @endif
 
 @if (auth()->check())
     @if ($armarios->isEmpty())
-        <div class="alert alert-info">
-            Todos os armários estão ocupados no momento.
+        <div id=layout_conteudo>
+            <div class="alert alert-info">
+                Todos os armários estão ocupados no momento.
+            </div>
         </div>
     @else
+    <div id=layout_conteudo>
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8">
@@ -28,23 +39,37 @@
                         <table class="table table-bordered table-striped table-hover" style="font-size:15px;">
                             <thead>
                                 <tr>
-                                    <th>Número</th>
-                                    <th>Estado</th>
+                                    <th>Selecionar Armário</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($armarios as $armario)
-                                    <tr>
-                                        <td>{{ $armario->numero }}</td>
-                                        <td>{{ $armario->estado }}</td>
-                                        <td>
-                                            <button id="btn-solicitar-emprestimo-{{ $armario->numero }}" class="btn btn-outline-primary" type="button" data-toggle="modal" data-target="#modalSolicitarEmprestimo-{{ $armario->numero }}">Solicitar empréstimo</button>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                <form method="POST" action="{{route('armarios.emprestimo')}}">
+                                    @csrf
+                                    
+                                    <td>
+                                        <select id="selectArmario" name="numero" class="form-control">
+                                            @foreach($armarios as $armario)
+                                            <option value="{{ $armario->id }}">{{ $armario->numero }} </option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button id="btn-solicitar-emprestimo" class="btn btn-outline-primary" type="button" data-toggle="modal" data-target="#modalSolicitarEmprestimo">Solicitar empréstimo</button>
+                                    </td>
+                                </form>
+                                    
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                                    <!-- Modal -->
-                                    <div class="modal" id="modalSolicitarEmprestimo-{{ $armario->numero }}">
+<div class="modal" id="modalSolicitarEmprestimo">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <!-- Cabeçalho do Modal -->
@@ -55,25 +80,33 @@
 
                                             <!-- Corpo do Modal -->
                                             <div class="modal-body">
-                                                <p>O uso dos armários é facultativo e se restringe ao período em que o aluno está ativo junto à Pós-Graduação do IME. Não é permitida a utilização dos armários para guardar alimentos, bebidas e itens molhados (como guarda-chuvas, capas de chuva, etc). Os pertences neles depositados são de responsabilidade do usuário. A CPG / CCPs não se responsabilizam pelo extravio, dano ou perda de objetos neles guardados. Estou ciente que, ao defender minha tese / dissertação, terei o prazo de 1 (um) mês para desocupá-lo. Após este prazo, os pertences serão retirados e guardados por mais 15 (quinze) dias, sendo doados e destinados da seguinte forma: Livros serão doados para a Biblioteca do Instituto; Objetos diversos serão doados caso haja alguma utilidade.</p>
+                                                <p>O uso dos armários é facultativo e se restringe ao período em que o aluno está ativo junto à Pós-Graduação do IME. 
+                                                    Não é permitida a utilização dos armários para guardar alimentos, bebidas e itens molhados (como guarda-chuvas, capas de chuva, etc). Os pertences neles depositados são de responsabilidade do usuário. A CPG / CCPs não se responsabilizam pelo extravio, dano ou perda de objetos neles guardados. Estou ciente que, ao defender minha tese / dissertação, terei o prazo de 1 (um) mês para desocupá-lo. Após este prazo, os pertences serão retirados e guardados por mais 15 (quinze) dias, sendo doados e destinados da seguinte forma: Livros serão doados para a Biblioteca do Instituto; Objetos diversos serão doados caso haja alguma utilidade.</p>
                                             </div>
 
                                             <!-- Rodapé do Modal -->
                                             <div class="modal-footer">
-                                                <form method="POST" action="{{ route('armarios.emprestimo', $armario) }}">
+                                                
+                                                <form method="POST" action="{{ route('armarios.emprestimo') }}">
                                                     @csrf
+                                                    <input type="hidden" id="numeroArmario" name="numero" value="">
                                                     <button type="submit" class="btn btn-primary">Confirmar Empréstimo</button>
                                                 </form>
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                                                    </div>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+                                </div>       
+
     @endif
+@section('javascripts_bottom')
+    <script>
+        document.addEventListener("DOMContentLoaded", function(event) {
+            document.getElementById("selectArmario").addEventListener("change", function() {
+                var numeroSelecionado = this.value;
+                document.getElementById("numeroArmario").value = numeroSelecionado;
+            });
+        });
+    </script>
+@endsection
+
 @else
     <div class="jumbotron">
     <div style="font-family: Arial, sans-serif; line-height: 1.6;">
@@ -91,6 +124,11 @@
 </p>
 </div>
     </div>
+
 @endif
 
+
+
 @endsection
+
+
