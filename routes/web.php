@@ -17,7 +17,7 @@ Route::get('/armarios', [ArmarioController::class, 'index'])->middleware(['auth'
 Route::post('/armarios/{armario}/liberar', [ArmarioController::class, 'liberar'])->name('armarios.liberar');
 
 Route::get('/', [EmprestimoController::class, 'index']);
-Route::post('/armarios/{armario}/emprestimo',[EmprestimoController::class,'emprestimo'])->name("armarios.emprestimo");
+Route::post('/armarios/emprestimo',[EmprestimoController::class,'emprestimo'])->name("armarios.emprestimo");
 Route::get('/armarios/create/emLote', [ArmarioController::class, 'createEmLote'])->name('armarios.createEmLote');
 Route::post('/armarios/store/emLote', [ArmarioController::class, 'storeEmLote'])->name('armarios.storeEmLote');
 Route::resource('armarios',ArmarioController::class);

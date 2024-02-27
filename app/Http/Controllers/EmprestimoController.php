@@ -16,6 +16,7 @@ use App\Mail\SistemaDeArmarios;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use App\Mail\AvisoSecEmprestimo;
+use App\Http\Requests\SolicitarEmprestimoRequest;
 
 
 
@@ -102,7 +103,7 @@ class EmprestimoController extends Controller
         //
     }
 
-    public function emprestimo(Armario $armario)
+    public function emprestimo(SolicitarEmprestimoRequest $request)
     {
         if (!auth()->user()->hasRole(['Aluno de pós'])){
             abort(403);
@@ -113,36 +114,42 @@ class EmprestimoController extends Controller
             return back();
         }
         $user = auth()->user();
+        $validated = $request->validated();        
+        
+        $armario = Armario::where("numero", $validated["numero"])->first();
+        if($armario->estado == 'Disponível'){
+            $armario->estado = 'Emprestado';
+        
+            $armario->save();
 
+            $emprestimo = new Emprestimo;
+            $emprestimo->user_id = auth()->user()->id;
         
-        
-        $armario->estado = 'Emprestado';
-        
-        $armario->save();
-
-        $emprestimo = new Emprestimo;
-        $emprestimo->user_id = auth()->user()->id;
-       
-        $emprestimo->armario_id = $armario->id;
-        
-        if(User::testDataDefesa($user->codpes) == null){
+            $emprestimo->armario_id = $armario->id;
             
-        }else{
-            $emprestimo->dataprev = User::testDataDefesa($user->codpes)->format('d/m/Y');
-            $datafinal = Carbon::createFromFormat('d/m/Y', $emprestimo->dataprev)->addDays(30)->format('d/m/Y');
-            $emprestimo->datafinal = $datafinal;
+            if(User::testDataDefesa($user->codpes) == null){
+                
+            }else{
+                $emprestimo->dataprev = User::testDataDefesa($user->codpes)->format('d/m/Y');
+                $datafinal = Carbon::createFromFormat('d/m/Y', $emprestimo->dataprev)->addDays(30)->format('d/m/Y');
+                $emprestimo->datafinal = $datafinal;
+            }
+            
+            Mail::to($user->email)->send(new SistemaDeArmarios($user, $armario));
+            $secretarias = User::with('roles')->get()->filter(fn($usuario)=>$usuario->roles->where('name','Secretaria')->toArray());
+            foreach ($secretarias as $secretaria){
+                Mail::to($secretaria->email)->send(new AvisoSecEmprestimo($user, $armario));
+            }
+            $emprestimo->save();
+            Session::flash('success', 'Empréstimo realizado com sucesso!');
+            
+            
+            return redirect("/");
+
         }
         
-        Mail::to($user->email)->send(new SistemaDeArmarios($user, $armario));
-        $secretarias = User::with('roles')->get()->filter(fn($usuario)=>$usuario->roles->where('name','Secretaria')->toArray());
-        foreach ($secretarias as $secretaria){
-            Mail::to($secretaria->email)->send(new AvisoSecEmprestimo($user, $armario));
-        }
-        $emprestimo->save();
-        Session::flash('success', 'Empréstimo realizado com sucesso!');
+
         
-        
-        return redirect("/");
         
     }
 
