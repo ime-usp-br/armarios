@@ -14,10 +14,6 @@ class ArmarioSeeder extends Seeder
      */
     public function run()
     {
-        $armario = [
-            'número' => "100"
-
-        ];
-        Armario::create($armario);
+    
     }
 }

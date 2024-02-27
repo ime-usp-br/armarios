@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateArmariosTable extends Migration
+class AdicionarNovaColunaAUser extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateArmariosTable extends Migration
      */
     public function up()
     {
-        Schema::create('armarios', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->string('número');
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('dataDefesa')->nullable();
         });
+    
     }
 
     /**
@@ -27,6 +26,6 @@ class CreateArmariosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('armarios');
+        //
     }
 }
