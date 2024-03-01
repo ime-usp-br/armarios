@@ -11,6 +11,13 @@ class Armario extends Model
 {
     use HasFactory;
 
+
+    const LIVRE = 'Livre';
+    const OCUPADO = 'Ocupado';
+    const BLOQUEADO = 'Bloqueado';
+
+
+
     protected $fillable = [
         "numero",
         "estado",
@@ -31,4 +38,16 @@ class Armario extends Model
     public function emprestimoAtivo(){
         return $this->emprestimos()->where('datafim',null)->first(); 
     }
+
+
+    public static function getEstadosArmarios()
+    {
+        return [
+            self::LIVRE => "Livre",
+            self::OCUPADO => "Ocupado",
+            self::BLOQUEADO => "Bloqueado",
+        ];
+    }
+
+    
 }

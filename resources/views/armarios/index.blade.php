@@ -5,6 +5,13 @@
 <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8">
+
+
+                    @if(Auth::user()->hasRole(['Admin',"Secretaria"]))
+                         <a  class="btn btn-primary btn-lg text-center m-3" href="{{'/armarios/create'}}"><i class="fas fa-plus"></i> Cadastrar armário</a>
+                    @endif
+
+
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover" style="font-size:15px;">
                             <thead>

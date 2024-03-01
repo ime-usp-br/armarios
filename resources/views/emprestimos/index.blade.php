@@ -1,134 +1,223 @@
-
 @extends('main')
 
 @section('content')
-@parent
-<script>
-    var armariosDisponiveis = {!! json_encode($armarios) !!};
-</script>
+    @parent
+    <script>
+        var armariosLivres = {!! json_encode($armariosLivres) !!};
+    </script>
 
-@if (session('success'))
-    <div id=layout_conteudo>
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    </div>
-@endif
-
-@if (session('alert-warning'))
-    <div id=layout_conteudo>
-        <div class="alert alert-warning">
-            {{ session('alert-warning') }}
-        </div>
-    </div>
-@endif
-
-@if (auth()->check())
-    @if ($armarios->isEmpty())
+    @if (session('success'))
         <div id=layout_conteudo>
-            <div class="alert alert-info">
-                Todos os armários estão ocupados no momento.
+            <div class="alert alert-success">
+                {{ session('success') }}
             </div>
         </div>
-    @else
-    <div id=layout_conteudo>
+    @endif
+
+    @if (session('alert-warning'))
+        <div id=layout_conteudo>
+            <div class="alert alert-warning">
+                {{ session('alert-warning') }}
+            </div>
+        </div>
+    @endif
+
+    @if (auth()->check())
+        @if ($armariosLivres && $armariosLivres->isEmpty())
+            
+
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover" style="font-size:15px;">
-                            <thead>
-                                <tr>
-                                    <th>Selecionar Armário</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                <form method="POST" action="{{route('armarios.emprestimo')}}">
-                                    @csrf
-                                    
-                                    <td>
-                                        <select id="selectArmario" name="numero" class="form-control">
-                                            @foreach($armarios as $armario)
-                                            <option value="{{ $armario->id }}">{{ $armario->numero }} </option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <button id="btn-solicitar-emprestimo" class="btn btn-outline-primary" type="button" data-toggle="modal" data-target="#modalSolicitarEmprestimo">Solicitar empréstimo</button>
-                                    </td>
-                                </form>
-                                    
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="row">
+                <div class="col-12 justify-content-center text-center">
+
+
+                    <h3>Não há nenhum armário livre :-(</h3>
+                    <p>&nbsp;</p>
+                    <p>Olá, <em>{{ Auth::user()->name }}</em>.</p>
+
+                    <p>Infelizmente há nenhum armário livre no momento. </p>
+                    <p>Mas não se preocupe, pois a qualquer momento um armário pode ficar livre.</p>
+                    <p>Fique de olho!</p>
+                </p>
+
+
+                   
+
                 </div>
             </div>
         </div>
-    </div>
 
-<div class="modal" id="modalSolicitarEmprestimo">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <!-- Cabeçalho do Modal -->
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">Termos e Condições</h4>
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                            </div>
 
-                                            <!-- Corpo do Modal -->
-                                            <div class="modal-body">
-                                                <p>O uso dos armários é facultativo e se restringe ao período em que o aluno está ativo junto à Pós-Graduação do IME. 
-                                                    Não é permitida a utilização dos armários para guardar alimentos, bebidas e itens molhados (como guarda-chuvas, capas de chuva, etc). Os pertences neles depositados são de responsabilidade do usuário. A CPG / CCPs não se responsabilizam pelo extravio, dano ou perda de objetos neles guardados. Estou ciente que, ao defender minha tese / dissertação, terei o prazo de 1 (um) mês para desocupá-lo. Após este prazo, os pertences serão retirados e guardados por mais 15 (quinze) dias, sendo doados e destinados da seguinte forma: Livros serão doados para a Biblioteca do Instituto; Objetos diversos serão doados caso haja alguma utilidade.</p>
-                                            </div>
+        @else
+            @if (auth()->user()->emprestimos->isEmpty())
+                <div id=layout_conteudo>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 justify-content-center text-center">
 
-                                            <!-- Rodapé do Modal -->
-                                            <div class="modal-footer">
-                                                
-                                                <form method="POST" action="{{ route('armarios.emprestimo') }}">
-                                                    @csrf
-                                                    <input type="hidden" id="numeroArmario" name="numero" value="">
-                                                    <button type="submit" class="btn btn-primary">Confirmar Empréstimo</button>
-                                                </form>
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                                </div>       
 
+                                <h3>Você pode pegar um armário emprestado :-)</h3>
+                                <p>&nbsp;</p>
+                                <p>Olá, <em>{{ Auth::user()->name }}</em>.</p>
+
+                                <p>Você pode solicitar o empréstimo de um dos armários livres. <br />Basta escolher o número
+                                    do armário e clicar em solicitar empréstimo. </p>
+
+
+                                <form method="POST" action="{{ route('armarios.emprestimo') }}">
+                                    @csrf
+
+                                    <p>
+                                        <select id="selectArmario" name="numero" class="form-control-lg text-center">
+                                            <option value="">Escolha um armário</option>
+                                            @foreach ($armariosLivres as $armario)
+                                                <option value="{{ $armario->id }}">{{ $armario->numero }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </p>
+
+                                    <p>
+
+                                        <button id="btn-solicitar-emprestimo" class="btn btn-lg btn-primary m-3 p-3"
+                                            type="button" data-toggle="modal"
+                                            data-target="#modalSolicitarEmprestimo">Solicitar
+                                            empréstimo</button>
+
+                                    </p>
+                                </form>
+
+
+                                <p>
+                                    <button type="button" class="btn btn-link" data-toggle="modal"
+                                        data-target="#modalTermos">
+                                        Termos e Condições para Uso de Armários
+                                    </button>
+                                </p>
+
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 justify-content-center text-center">
+
+
+                                <h3>Você possui um empréstimo ativo!</h3>
+                                <p>&nbsp;</p>
+                                <p>Olá, <em>{{ Auth::user()->name }}</em>.</p>
+                                <p>Veja as informações sobre o armário que está emprestado para você.</p>
+
+
+
+
+                                <div class="card m-5">
+                                    <h5 class="card-header"></h5>
+                                    <div class="card-body">
+
+
+
+                                        <p><strong>Armário</strong> </p>
+                                        <h4>{{ $emprestimo->armario->numero }}</h4>
+
+                                        <p><strong>Desde</strong></p>
+
+                                        <h4>{{ Carbon\Carbon::parse($emprestimo->created_at)->format('d/m/Y H:i') }}</h4>
+
+
+
+                                        <form action="{{ route('armarios.liberar', $emprestimo->armario) }}" method="post">
+                                            @csrf
+                                            @method('POST')
+                                            <button type="submit" class="btn btn-lg btn-primary m-5 p-3">Liberar
+                                                armário</button>
+                                        </form>
+
+                                    </div>
+                                </div>
+
+
+
+                                <button type="button" class="btn btn-link" data-toggle="modal" data-target="#modalTermos">
+                                    Termos e Condições para Uso de Armários
+                                </button>
+
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+            @endif
+
+            <div class="modal" id="modalSolicitarEmprestimo">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <!-- Cabeçalho do Modal -->
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- Corpo do Modal -->
+                        <div class="modal-body">
+                            <!-- Corpo do Modal -->
+                            @include('partials.termo')
+                        </div>
+
+                        <!-- Rodapé do Modal -->
+                        <div class="modal-footer">
+
+                            <form method="POST" action="{{ route('armarios.emprestimo') }}">
+                                @csrf
+                                <input type="hidden" id="numeroArmario" name="numero" value="">
+                                <button type="submit" class="btn btn-primary">Confirmar o empréstimo</button>
+                            </form>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Desistir e fechar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="modal" id="modalTermos">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <!-- Cabeçalho do Modal -->
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- Corpo do Modal -->
+                        @include('partials.termo')
+                        <!-- Rodapé do Modal -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        @endif
+
+
+
+        @section('javascripts_bottom')
+            <script>
+                document.addEventListener("DOMContentLoaded", function(event) {
+                    document.getElementById("selectArmario").addEventListener("change", function() {
+                        var numeroSelecionado = this.value;
+                        document.getElementById("numeroArmario").value = numeroSelecionado;
+                    });
+                });
+            </script>
+        @endsection
     @endif
-@section('javascripts_bottom')
-    <script>
-        document.addEventListener("DOMContentLoaded", function(event) {
-            document.getElementById("selectArmario").addEventListener("change", function() {
-                var numeroSelecionado = this.value;
-                document.getElementById("numeroArmario").value = numeroSelecionado;
-            });
-        });
-    </script>
-@endsection
-
-@else
-    <div class="jumbotron">
-    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-    <h1 style="text-align: center;">Bem-vindo ao Sistema de Gerência de Armários</h1>
-    
-    <p>O Sistema de Gerência de Armários é uma iniciativa dedicada a oferecer comodidade e praticidade aos alunos de pós-graduação do IME-USP.</p>
-
-    <p>Como parte de nosso compromisso em apoiar sua jornada acadêmica, todo aluno de pós-graduação tem o direito a um armário pessoal durante o período em que estiver matriculado em qualquer programa de pós-graduação.</p>
-
-    <p>Esses armários são projetados para auxiliar na organização e armazenamento de materiais essenciais, proporcionando um ambiente de estudo mais eficaz e conveniente.</p>
-
-    <p>Estamos aqui para tornar sua experiência acadêmica mais fluida e produtiva, e nosso sistema de gerência de armários é mais uma maneira de atender a essa necessidade.</p>
-
-    <p>Você ainda não fez seu login com a senha única USP. <a href="login">Faça seu login!</a>
-</p>
-</div>
-    </div>
-
-@endif
 
 
 
 @endsection
-
-
