@@ -28,8 +28,10 @@ class ArmarioController extends Controller
             // Verifique se o usuário tem a role "Admin" OU "Secretaria".
             if (auth()->user()->hasRole(['Admin', 'Secretaria'])) {
                 // Se o usuário tiver uma dessas roles, continue com a exibição dos armários.
-                $armarios = Armario::all()->sortBy("numero");
-    
+                 
+                $armarios = Armario::with('emprestimos')->get()->sortBy("numero");
+
+
                 return view('armarios.index', [
                     'armarios' => $armarios,
                 ]);

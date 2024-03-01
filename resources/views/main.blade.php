@@ -34,9 +34,6 @@
                 <ul id="menulateral" class="menulist">
                     <li class="menuHeader">Acesso Restrito</li>
                     <li>
-                        <a href="/">Página Inicial</a>
-                    </li>
-                    <li>
                         <a href="/armarios">Armários</a>
                     </li>
                     <li>
