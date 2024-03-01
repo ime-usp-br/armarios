@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreArmarioRequest;
+use App\Http\Requests\ArmarioRequest;
 use App\Http\Requests\CriacaoEmLoteArmarioRequest;
 use App\Http\Requests\UpdateArmarioRequest;
 use App\Models\Armario;
@@ -74,60 +74,28 @@ class ArmarioController extends Controller
     }
 
 
-
-    /**
-     * Cria armários em lote
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function createEmLote()
-    {        
-        
-        if (auth()->check()) {
-            // Verifique se o usuário tem a role "Admin" OU "Secretaria".
-            if (auth()->user()->hasRole(['Admin', 'Secretaria'])) {
-                
-    
-                return view('armarios.createEmLote',[
-                    'armario' => new Armario,
-                ]);
-            }
-        }
-    
-        // Se o usuário não estiver autenticado ou não tiver as roles, redirecione-o para uma página de erro 403 (acesso proibido) ou execute outra ação apropriada.
-        abort(403);
-        
-    }    
-
-    public function storeEmLote(CriacaoEmLoteArmarioRequest $request)
-    {
-        $validated = $request->validated();
-        for ($i = $validated["numero_inicial"]; $i <= $validated["numero_final"]; $i++){
-            Armario::firstOrCreate(["numero"=>$i],["estado"=>'Disponível']);
-        }
-
-        return redirect("/armarios");
-    }
-    
-
-
-
-
-
-
-    /**
+   /**
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\StoreArmarioRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreArmarioRequest $request)
+    public function store(ArmarioRequest $request)
     {
-        $armario = new Armario;
-        $armario->numero = $request->numero;
-        $armario->estado = 'Disponível';
-        $armario->save();
-        return redirect("/armarios/{$armario->id}");
+        $validated = $request->validated();
+
+        if ($validated['numero_final'] == NULL ) {
+            $armario = new Armario;
+            $armario->numero = $validated['numero_inicial'];
+            $armario->estado = Armario::LIVRE; 
+            $armario->save();
+        } 
+
+        for ($i = $validated["numero_inicial"]; $i <= $validated["numero_final"]; $i++){
+            Armario::firstOrCreate(["numero"=>$i],["estado"=>Armario::LIVRE]);
+        }
+
+        return redirect("/armarios");
     }
 
     /**
@@ -234,7 +202,7 @@ class ArmarioController extends Controller
             }
         }
 
-        $armario->update(['estado' => 'Disponível']);
+        $armario->update(['estado' => Armario::LIVRE]);
         $emprestimo->delete();
 
         return redirect()->route('emprestimos.index')->with('success', 'Armário liberado com sucesso.');

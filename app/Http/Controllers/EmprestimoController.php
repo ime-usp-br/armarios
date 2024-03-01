@@ -30,11 +30,21 @@ class EmprestimoController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
+        $armariosLivres = null;
+        $emprestimo = null;
 
-        $armarios = Armario::where("estado", "Disponível")->get()->sortBy('numero');
-        return view('emprestimos.index',[
-            'armarios' => $armarios
-        ]);
+        if (Auth::check()) {
+            if ($user->emprestimos->isEmpty()) {
+                $armariosLivres = Armario::where("estado", Armario::LIVRE)->get()->sortBy('numero');
+            } else {
+                $emprestimo = $user->emprestimos->first();
+            }
+
+            return view('emprestimos.index', compact('emprestimo', 'armariosLivres'));
+        } else {
+            return view('welcome');
+        }
     }
 
     /**
@@ -105,71 +115,40 @@ class EmprestimoController extends Controller
 
     public function emprestimo(SolicitarEmprestimoRequest $request)
     {
-        if (!auth()->user()->hasRole(['Aluno de pós'])){
+        if (!auth()->user()->hasRole(['Aluno de pós'])) {
             abort(403);
-        
         }
-        if (Emprestimo::where('user_id',auth()->user()->id)->first()){
+        if (Emprestimo::where('user_id', auth()->user()->id)->first()) {
             Session::flash('alert-warning', 'Usuário já possui empréstimo de armário.');
             return back();
         }
         $user = auth()->user();
-        $validated = $request->validated();        
-        
+        $validated = $request->validated();
+
         $armario = Armario::where("numero", $validated["numero"])->first();
-        if($armario->estado == 'Disponível'){
-            $armario->estado = 'Emprestado';
-        
+        if ($armario->estado == Armario::LIVRE) {
+            $armario->estado = Armario::OCUPADO;
+
             $armario->save();
 
             $emprestimo = new Emprestimo;
             $emprestimo->user_id = auth()->user()->id;
-        
+
             $emprestimo->armario_id = $armario->id;
-            
-            if(User::testDataDefesa($user->codpes) == null){
-                
-            }else{
-                $emprestimo->dataprev = User::testDataDefesa($user->codpes)->format('d/m/Y');
-                $datafinal = Carbon::createFromFormat('d/m/Y', $emprestimo->dataprev)->addDays(30)->format('d/m/Y');
-                $emprestimo->datafinal = $datafinal;
-            }
+
             
             Mail::to($user->email)->send(new SistemaDeArmarios($user, $armario));
-            $secretarias = User::with('roles')->get()->filter(fn($usuario)=>$usuario->roles->where('name','Secretaria')->toArray());
-            foreach ($secretarias as $secretaria){
+            $secretarias = User::with('roles')->get()->filter(fn ($usuario) => $usuario->roles->where('name', 'Secretaria')->toArray());
+            foreach ($secretarias as $secretaria) {
                 Mail::to($secretaria->email)->send(new AvisoSecEmprestimo($user, $armario));
             }
+            
             $emprestimo->save();
-            Session::flash('success', 'Empréstimo realizado com sucesso!');
-            
-            
+           
+
             return redirect("/");
-
         }
-        
-
-        
-        
     }
 
-    public function meuarmario(Armario $armario)
-    {
-        if (auth()->check()) {
-            if (auth()->user()->hasRole(['Aluno de pós'])) {
-                
     
-                return view('emprestimos.meuarmario',[
-                ]);
-            }
-        }
-    
-        // Se o usuário não estiver autenticado ou não tiver as roles, redirecione-o para uma página de erro 403 (acesso proibido) ou execute outra ação apropriada.
-        abort(403);
-    }
-       
-
-
 }
-
-
