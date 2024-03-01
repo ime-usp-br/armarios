@@ -30,4 +30,12 @@ class SolicitarEmprestimoRequest extends FormRequest
             ]
         ];
     }
+
+
+    public function messages()
+    {
+        return [
+            'numero.required' => 'Informe o número do armário.',
+        ];
+    }
 }
