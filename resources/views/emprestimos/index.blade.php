@@ -22,7 +22,7 @@
         </div>
     @endif
 
-    @if (auth()->check())
+    @if (auth()->check() && auth()->user()->hasRole(['Aluno de pós'])) 
         @if ($armariosLivres && $armariosLivres->isEmpty())
             
 
