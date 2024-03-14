@@ -68,7 +68,7 @@
                                     @csrf
 
                                     <p>
-                                        <select id="selectArmario" name="numero" class="form-control-lg text-center">
+                                        <select id="selectArmario" name="numero" class="form-control-lg text-center" required>
                                             <option value="">Escolha um armário</option>
                                             @foreach ($armariosLivres as $armario)
                                                 <option value="{{ $armario->id }}">{{ $armario->numero }}
@@ -81,7 +81,7 @@
 
                                         <button id="btn-solicitar-emprestimo" class="btn btn-lg btn-primary m-3 p-3"
                                             type="button" data-toggle="modal"
-                                            data-target="#modalSolicitarEmprestimo">Solicitar
+                                            data-target="#modalSolicitarEmprestimo" disabled>Solicitar
                                             empréstimo</button>
 
                                     </p>
@@ -213,7 +213,20 @@
                         var numeroSelecionado = this.value;
                         document.getElementById("numeroArmario").value = numeroSelecionado;
                     });
+
+                    
                 });
+
+
+                document.getElementById('selectArmario').addEventListener('change', function() {
+                    var botaoEnviar = document.getElementById('btn-solicitar-emprestimo');
+                    botaoEnviar.disabled = this.value === ''; // Desabilita o botão se nenhuma opção for selecionada
+                });
+
+                    
+
+
+
             </script>
         @endsection
     @endif
