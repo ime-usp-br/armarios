@@ -49,7 +49,7 @@
 
 
         @else
-            @if (auth()->user()->emprestimos->isEmpty())
+            @if ( $emprestimo === null )
                 <div id=layout_conteudo>
                     <div class="container">
                         <div class="row">

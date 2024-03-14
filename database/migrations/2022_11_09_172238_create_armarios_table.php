@@ -16,7 +16,8 @@ class CreateArmariosTable extends Migration
         Schema::create('armarios', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('numero');
+            $table->string('numero')->nullable(false);
+            $table->enum('estado', ['LIVRE', 'OCUPADO', 'BLOQUEADO'])->default('LIVRE')->nullable(false);
         });
     }
 

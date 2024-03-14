@@ -204,8 +204,13 @@ class ArmarioController extends Controller
             }
         }
 
+        
         $armario->update(['estado' => Armario::LIVRE]);
-        $emprestimo->delete();
+        
+        $emprestimo->estado = Emprestimo::ENCERRADO;
+        $emprestimo->datafim = Carbon::now();
+        $emprestimo->update();
+        
 
         return redirect()->route('emprestimos.index')->with('success', 'Armário liberado com sucesso.');
     }

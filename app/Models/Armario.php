@@ -12,9 +12,9 @@ class Armario extends Model
     use HasFactory;
 
 
-    const LIVRE = 'Livre';
-    const OCUPADO = 'Ocupado';
-    const BLOQUEADO = 'Bloqueado';
+    const LIVRE = 'LIVRE';
+    const OCUPADO = 'OCUPADO';
+    const BLOQUEADO = 'BLOQUEADO';
 
 
 
@@ -36,16 +36,16 @@ class Armario extends Model
     }
 
     public function emprestimoAtivo(){
-        return $this->emprestimos()->where('datafim',null)->first(); 
+        return $this->emprestimos()->where('datafim', null)->where('estado', Emprestimo::ATIVO)->first();
     }
 
 
     public static function getEstadosArmarios()
     {
         return [
-            self::LIVRE => "Livre",
-            self::OCUPADO => "Ocupado",
-            self::BLOQUEADO => "Bloqueado",
+            self::LIVRE => "LIVRE",
+            self::OCUPADO => "OCUPADO",
+            self::BLOQUEADO => "BLOQUEADO",
         ];
     }
 

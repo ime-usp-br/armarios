@@ -54,6 +54,7 @@ class User extends Authenticatable
         return $this->hasMany(Emprestimo::class, 'user_id'); // Substitua 'user_id' pelo nome da chave estrangeira correta
     }
 
+
     public static function test($codpes)
     {
 
