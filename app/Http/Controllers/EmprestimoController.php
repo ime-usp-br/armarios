@@ -32,14 +32,21 @@ class EmprestimoController extends Controller
     {
         $user = Auth::user();
         $armariosLivres = null;
-        $emprestimo = null;
+       
+
+        $emprestimo = Emprestimo::where(
+                [
+                    'user_id' => $user->id,
+                    'estado'  => Emprestimo::ATIVO,
+                ]
+            )->first();
+
+       
 
         if (Auth::check()) {
-            if ($user->emprestimos->isEmpty()) {
+            if ($emprestimo === null) {
                 $armariosLivres = Armario::where("estado", Armario::LIVRE)->get()->sortBy('numero');
-            } else {
-                $emprestimo = $user->emprestimos->first();
-            }
+            } 
 
             return view('emprestimos.index', compact('emprestimo', 'armariosLivres'));
         } else {
@@ -115,17 +122,16 @@ class EmprestimoController extends Controller
 
     public function emprestimo(SolicitarEmprestimoRequest $request)
     {
+        
         if (!auth()->user()->hasRole(['Aluno de pós'])) {
             abort(403);
         }
-        if (Emprestimo::where('user_id', auth()->user()->id)->first()) {
-            Session::flash('alert-warning', 'Usuário já possui empréstimo de armário.');
-            return back();
-        }
+        
         $user = auth()->user();
         $validated = $request->validated();
 
         $armario = Armario::where("numero", $validated["numero"])->first();
+
         if ($armario->estado == Armario::LIVRE) {
             $armario->estado = Armario::OCUPADO;
 
@@ -133,7 +139,7 @@ class EmprestimoController extends Controller
 
             $emprestimo = new Emprestimo;
             $emprestimo->user_id = auth()->user()->id;
-
+            $emprestimo->estado = Emprestimo::ATIVO;
             $emprestimo->armario_id = $armario->id;
 
             

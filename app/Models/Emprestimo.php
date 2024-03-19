@@ -14,6 +14,12 @@ class Emprestimo extends Model
 {
     use HasFactory;
 
+    const ATIVO = 'ATIVO';
+    const ENCERRADO = 'ENCERRADO';
+    
+
+    
+
     protected $fillable = [
         'datafim',
         
@@ -55,4 +61,13 @@ class Emprestimo extends Model
     public function user(){
         return $this->belongsTo(User::class,'user_id');
     }
+
+    public static function getEstadosArmarios()
+    {
+        return [
+            self::ATIVO => "ATIVO",
+            self::ENCERRADO => "ENCERRADO",
+        ];
+    }
+
 }
