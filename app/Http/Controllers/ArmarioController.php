@@ -112,17 +112,10 @@ class ArmarioController extends Controller
      */
     public function show(Armario $armario)
     {
-        $emprestimo = Emprestimo::where('datafim', null)->where('armario_id', $armario->id)->first();
+        $emprestimos = Emprestimo::where('armario_id', $armario->id)->get();
 
-        $user = $emprestimo ? $emprestimo->user : null;
-
-        return view('armarios.show', [
-            'armario' => $armario,
-            'emprestimo' => $emprestimo,
-            'user' => $user,
-
-
-        ]);
+        
+        return view('armarios.show', compact('armario', 'emprestimos'));
     }
 
     /**

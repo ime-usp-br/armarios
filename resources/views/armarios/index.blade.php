@@ -20,7 +20,6 @@
                                 <th rowspan="2">Número</th>
                                 <th rowspan="2">Estado</th>
                                 <th colspan="2">Empréstimos ativos</th>
-                                <th rowspan="2">Ações</th>
                             </tr>
                             <tr>
                                 <th>Aluno(a)</th>
@@ -31,7 +30,7 @@
                         <tbody>
                             @foreach ($armarios as $armario)
                                 <tr>
-                                    <td><a href="/armarios/{{ $armario->id }}">{{ $armario->numero }}</a>
+                                    <td><a href="/armarios/{{ $armario->id }}" class="btn btn-lg btn-secondary">{{ $armario->numero }}</a>
                                     </td>
                                     <td>{{ $armario->estado }}</td>
                                     @if ($armario->emprestimos->isNotEmpty())
@@ -41,41 +40,6 @@
                                         <td></td>
                                         <td></td>
                                     @endif
-                                    <td>
-                                        <div class="btn-group" role="group" aria-label="Basic example">
-                                       
-                                       
-                                        @if ($armario->estado === \App\Models\Armario::BLOQUEADO)
-                                            <form action="{{ route('armarios.desbloquear', $armario) }}" method="post">
-                                                @csrf
-                                                @method('POST')
-                                                <button type="submit" class="btn btn-primary m-3">Desbloquear</button>
-                                            </form>
-                                            @else
-                                            <form action="{{ route('armarios.bloquear', $armario) }}" method="post">
-                                                @csrf
-                                                @method('POST')
-                                                <button type="submit" class="btn btn-secondary m-3">Bloquear</button>
-                                            </form>
-                                        
-                                        @endif
-
-
-                                        @if ($armario->estado === \App\Models\Armario::OCUPADO)
-                                        <form action="{{ route('armarios.liberar', $armario) }}" method="post">
-                                            @csrf
-                                            @method('POST')
-                                            <button type="submit" class="btn btn-danger m-3" onclick="return confirm('Tem certeza que deseja liberar o armário?');">Liberar</button>
-                                        </form>
-                                    @endif
-                                    
-                                        </div>
-
-                                       
-                                       
-                                        
-                                        
-                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
