@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use App\Mail\AvisoSecEmprestimo;
 use App\Http\Requests\SolicitarEmprestimoRequest;
+use App\Events\EmprestimoCriado;
 
 
 
@@ -33,13 +34,16 @@ class EmprestimoController extends Controller
         $user = Auth::user();
         $armariosLivres = null;
        
-
-        $emprestimo = Emprestimo::where(
+        if (!$user == null){
+            $emprestimo = Emprestimo::where(
                 [
                     'user_id' => $user->id,
                     'estado'  => Emprestimo::ATIVO,
                 ]
             )->first();
+
+        }
+        
 
        
 
@@ -141,15 +145,13 @@ class EmprestimoController extends Controller
             $emprestimo->user_id = auth()->user()->id;
             $emprestimo->estado = Emprestimo::ATIVO;
             $emprestimo->armario_id = $armario->id;
+            
 
             
-            Mail::to($user->email)->send(new SistemaDeArmarios($user, $armario));
-            $secretarias = User::with('roles')->get()->filter(fn ($usuario) => $usuario->roles->where('name', 'Secretaria')->toArray());
-            foreach ($secretarias as $secretaria) {
-                Mail::to($secretaria->email)->send(new AvisoSecEmprestimo($user, $armario));
-            }
+            
             
             $emprestimo->save();
+            event(new EmprestimoCriado($emprestimo));
            
 
             return redirect("/");
