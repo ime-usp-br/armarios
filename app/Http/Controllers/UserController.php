@@ -14,8 +14,17 @@ class UserController extends Controller
     
         // Se o usuário não estiver autenticado ou não tiver as roles, redirecione-o para uma página de erro 403 (acesso proibido) ou execute outra ação apropriada.
         
+        if (auth()->check()) {
+            // Verifique se o usuário tem a role "Admin" OU "Secretaria".
+            if ((auth()->check() && 
+            (
+                auth()->user()->hasRole(['Admin', 'Secretaria']) || 
+                auth()->user()->hasPermissionTo('admin')
+            )
+            )) {
+                // Se o usuário tiver uma dessas roles, continue com a exibição dos armários.
 
-        $perfisEspeciais = ['Administrador', 'Secretaria'];
+                $perfisEspeciais = ['Administrador', 'Secretaria'];
         $usuarios = User::whereHas('roles', function($q) use ($perfisEspeciais){ 
                         return $q->whereIn('name', $perfisEspeciais);})->orderBy('users.name')->get()
                     ->merge(
@@ -42,6 +51,12 @@ class UserController extends Controller
         
 
         return view('users.index', compact('usuarios', 'roles'));
+            }
+        }
+
+        // Se o usuário não estiver autenticado ou não tiver as roles, redirecione-o para uma página de erro 403 (acesso proibido) ou execute outra ação apropriada.
+        abort(403);
+        
     }
 
     public function edit($id)

@@ -29,7 +29,12 @@
         </div>
     </div>
     @if (Auth::check())
-        @if (Auth::user()->hasRole(['Admin', 'Secretaria']))
+        @if (Auth::check() && 
+            (
+                Auth::user()->hasRole(['Admin', 'Secretaria']) || 
+                Auth::user()->hasPermissionTo('admin')
+            )
+            )
             <div id="layout_menu">
                 <ul id="menulateral" class="menulist">
                     <li class="menuHeader">Acesso Restrito</li>
