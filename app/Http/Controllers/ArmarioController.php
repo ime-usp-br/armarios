@@ -190,14 +190,7 @@ class ArmarioController extends Controller
 
             $user = User::findOrFail($emprestimo->user_id);
 
-            if ($usuarioLogado->hasRole('Secretaria')) {
-                Mail::to($user->email)->send(new LiberarArmario($user, $armario));
-            } elseif ($usuarioLogado->hasRole('Aluno de pós')) {
-                $secretarias = User::with('roles')->get()->filter(fn ($usuario) => $usuario->roles->where('name', 'Secretaria')->toArray());
-                foreach ($secretarias as $secretaria) {
-                    Mail::to($secretaria->email)->send(new AvisoSecLiberar($user, $armario));
-                }
-            }
+            
 
             $armario->update(['estado' => Armario::LIVRE]);
             $emprestimo->estado = Emprestimo::ENCERRADO;
