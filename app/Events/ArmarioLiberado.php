@@ -9,6 +9,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Armario;
 
 class ArmarioLiberado
 {
@@ -20,8 +21,8 @@ class ArmarioLiberado
      * @return void
      */
     public $armario;
-    
-    public function __construct()
+
+    public function __construct(Armario $armario)
     {
         $this->armario = $armario;
     }

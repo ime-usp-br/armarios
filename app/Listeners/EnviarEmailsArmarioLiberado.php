@@ -10,20 +10,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\LiberarArmario;
 use App\Mail\AvisoSecLiberar;
 use App\Models\Armario;
+use Illuminate\Support\Facades\Log;
 
-
-class EnviarEmailsArmarioLiberado
+class EnviarEmailsArmarioLiberado implements ShouldQueue
 {
-    /**
-     * Create the event listener.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
     /**
      * Handle the event.
      *
@@ -37,9 +27,9 @@ class EnviarEmailsArmarioLiberado
         $armario = $event->armario;
         $emprestimo = $armario->emprestimos()->where('estado', 'ATIVO')->first();
         $user = $emprestimo->user;
-        
-        
-        
+
+
+
         if ($usuarioLogado->hasRole('Secretaria')) {
             Mail::to($user->email)->send(new LiberarArmario($user, $armario));
         } elseif ($usuarioLogado->hasRole('Aluno de pós')) {
@@ -49,4 +39,6 @@ class EnviarEmailsArmarioLiberado
             }
         }
     }
+
+
 }
