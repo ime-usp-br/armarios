@@ -18,6 +18,7 @@ use Illuminate\Support\Collection;
 use App\Mail\AvisoSecEmprestimo;
 use App\Http\Requests\SolicitarEmprestimoRequest;
 use App\Events\EmprestimoCriado;
+use App\Listeners\EnviarEmailsEmprestimo;
 
 
 
@@ -145,13 +146,12 @@ class EmprestimoController extends Controller
             $emprestimo->user_id = auth()->user()->id;
             $emprestimo->estado = Emprestimo::ATIVO;
             $emprestimo->armario_id = $armario->id;
-            
-
-            
-            
-            
             $emprestimo->save();
+            \Log::info('Disparando evento EmprestimoCriado');
             event(new EmprestimoCriado($emprestimo));
+            //$event = new EmprestimoCriado($emprestimo);
+            //$listener = new EnviarEmailsEmprestimo();
+            //$listener->handle($event);
            
 
             return redirect("/");
