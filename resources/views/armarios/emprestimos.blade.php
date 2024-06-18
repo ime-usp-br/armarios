@@ -6,12 +6,10 @@
         <div class="row justify-content-center">
             <div>
 
-                <h1> Armários </h1>
+                <h1> Armários Emprestados </h1>
 
                 @if (Auth::user()->hasRole(['Admin', 'Secretaria']))
-                    <a class="btn btn-primary btn-lg text-center m-3" href="{{ '/armarios/create' }}"><i
-                            class="fas fa-plus"></i> Cadastrar armário</a>
-                    <a class="btn btn-primary btn-lg text-center m-3" href="{{ '/armarios/emprestados' }}"> Armários Emprestados</a>
+                    
                 @endif
 
                 <div class="table-responsive">
@@ -20,11 +18,12 @@
                             <tr>
                                 <th rowspan="2">Número</th>
                                 <th rowspan="2">Estado</th>
-                                <th colspan="2">Empréstimos ativos</th>
+                                <th colspan="3">Empréstimos ativos</th>
                             </tr>
                             <tr>
                                 <th>Aluno(a)</th>
                                 <th>Início do empréstimo</th>
+                                <th>Limite do empréstimo</th>
                                 
                             </tr>
                         </thead>
@@ -35,12 +34,22 @@
                                     </td>
                                     <td>{{ $armario->estado }}</td>
                                     @if ($armario->emprestimos->isNotEmpty())
-                                        <td>{{ $armario->emprestimos[0]->user->name }}</td>
-                                        <td>{{ $armario->emprestimos[0]->created_at->format('d/m/Y H:i') }}</td>
+                                    <td>{{ $armario->emprestimos->first()->user->name }}</td>
+                                    @if ($armario->emprestimos->first()->created_at)
+                                        <td>{{ $armario->emprestimos->first()->created_at->format('d/m/Y H:i') }}</td>
                                     @else
                                         <td></td>
+                                    @endif
+                                    @if ($armario->emprestimos->first()->datafim)
+                                        <td>{{ $armario->emprestimos->first()->datafim->format('d/m/Y H:i') }}</td>
+                                    @else
                                         <td></td>
                                     @endif
+                                @else
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                @endif
                                 </tr>
                             @endforeach
                         </tbody>

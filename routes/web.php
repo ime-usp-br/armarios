@@ -9,6 +9,8 @@ use App\Http\Controllers\UserController;
 
 Route::get('/', [EmprestimoController::class, 'index']);  
 Route::get('/armarios', [ArmarioController::class, 'index'])->middleware(['auth']);
+Route::get('/armarios/emprestados', [ArmarioController::class, 'armariosEmprestados'])->middleware(['auth']);
+
 Route::post('/armarios/{armario}/liberar', [ArmarioController::class, 'liberar'])->name('armarios.liberar');
 Route::post('/armarios/{armario}/bloquear', [ArmarioController::class, 'bloquear'])->name('armarios.bloquear');
 Route::post('/armarios/{armario}/desbloquear', [ArmarioController::class, 'desbloquear'])->name('armarios.desbloquear');
