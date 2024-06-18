@@ -197,6 +197,7 @@ class ArmarioController extends Controller
             } elseif ($usuarioLogado->hasRole('Aluno de pós')) {
                 $secretarias = User::with('roles')->get()->filter(fn ($usuario) => $usuario->roles->where('name', 'Secretaria')->toArray());
                 foreach ($secretarias as $secretaria) {
+                    \Log::info('Enviando email para secretaria: ', ['email' => $secretaria->email]);
                     Mail::to($secretaria->email)->send(new AvisoSecLiberar($user, $armario));
                 }
             }
@@ -232,5 +233,40 @@ class ArmarioController extends Controller
         $armario->estado = Armario::LIVRE;
         $armario->save();
         return redirect()->route('armarios.index');
+    }
+
+    public function armariosEmprestados()
+    {
+        if (auth()->check()) {
+            // Verifique se o usuário tem a role "Admin" OU "Secretaria".
+            if (auth()->user()->hasRole(['Admin', 'Secretaria'])) {
+                // Se o usuário tiver uma dessas roles, continue com a exibição dos armários.
+
+                $armarios = Armario::where('estado', 'OCUPADO')
+                ->whereHas('emprestimos')
+                ->with(['emprestimos' => function ($query) {
+                    $query->orderBy('created_at', 'desc');
+                }, 'emprestimos.user'])
+                ->get();
+
+
+
+                return view('armarios.emprestimos', [
+                    'armarios' => $armarios,
+                ]);
+            }
+        }
+
+        // Se o usuário não estiver autenticado ou não tiver as roles, redirecione-o para uma página de erro 403 (acesso proibido) ou execute outra ação apropriada.
+        abort(403);
+        $armarios = Armario::all()->sortBy("numero");
+        $today = Carbon::today()->format('d/m/Y');
+
+
+
+        return view('armarios.emprestimos', [
+            'armarios' => $armarios,
+
+        ]);
     }
 }
